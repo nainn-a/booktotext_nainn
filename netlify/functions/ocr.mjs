@@ -1,4 +1,4 @@
-export default async (req, context) => {
+export default async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 204,
@@ -20,7 +20,7 @@ export default async (req, context) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'x-api-key': Netlify.env.get('ANTHROPIC_API_KEY'),
+      'x-api-key': process.env.ANTHROPIC_API_KEY,
       'anthropic-version': '2023-06-01',
     },
     body: JSON.stringify(body),
