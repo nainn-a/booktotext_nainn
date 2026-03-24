@@ -8,232 +8,225 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #f9f8f6;
-      --surface: #ffffff;
-      --surface-2: #f3f2ef;
-      --border: rgba(0,0,0,0.10);
-      --border-md: rgba(0,0,0,0.18);
-      --text: #1a1a18;
-      --text-2: #5a5a56;
-      --text-3: #9a9a96;
-      --accent: #1a1a18;
-      --danger-bg: #fff1f0;
-      --danger-border: rgba(200,50,40,0.25);
-      --danger-text: #b03030;
-      --warn-bg: #fffbea;
-      --warn-text: #8a6000;
-      --radius: 10px;
-      --radius-sm: 6px;
+      --bg:          #F2EEE4;
+      --bg-2:        #EAE5D8;
+      --surface:     #E6E1D4;
+      --surface-2:   #DDD8CA;
+      --hist-bg:     rgba(210,202,184,0.88);
+      --border:      rgba(42,32,22,0.10);
+      --border-md:   rgba(42,32,22,0.20);
+      --border-hi:   rgba(42,32,22,0.40);
+      --text:        #2A2016;
+      --text-2:      #4A3C2C;
+      --text-3:      #7A6E58;
+      --thumb:       #8A7E68;
+      --btn-bg:      #2A2016;
+      --btn-text:    #F2EEE4;
+      --danger-bg:   rgba(160,48,32,0.08);
+      --danger-bd:   rgba(160,48,32,0.22);
+      --danger-tx:   #903020;
+      --expire-bg:   rgba(122,110,88,0.15);
+      --expire-tx:   #7A6E58;
+      --font-serif:  Georgia, 'Times New Roman', serif;
+      --font-sans:   'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --font-mono:   'Menlo', 'Consolas', monospace;
+      --radius:      10px;
+      --radius-sm:   4px;
     }
 
     body {
-      font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif;
-      background: var(--bg);
+      font-family: var(--font-sans);
+      background-color: var(--bg);
+      background-image: radial-gradient(circle, #C8C0AA 1px, transparent 1px);
+      background-size: 18px 18px;
       color: var(--text);
       min-height: 100vh;
-      padding: 2rem 1rem 4rem;
+      padding: 2.5rem 1rem 5rem;
     }
 
-    .container {
-      max-width: 640px;
-      margin: 0 auto;
-    }
+    .container { max-width: 640px; margin: 0 auto; }
 
-    header {
-      margin-bottom: 2rem;
-    }
+    header { margin-bottom: 2rem; }
     .logo {
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: -0.3px;
+      font-size: 18px; font-weight: 700; letter-spacing: 0.04em;
+      color: var(--text); font-family: var(--font-serif);
     }
-    .logo span { color: var(--text-3); font-weight: 400; }
-    .tagline { font-size: 13px; color: var(--text-3); margin-top: 4px; }
+    .tagline {
+      font-size: 12px; color: var(--text-3); margin-top: 4px;
+      font-family: var(--font-sans);
+    }
 
-    /* Drop zone */
     #drop-zone {
-      border: 1.5px dashed var(--border-md);
+      border: 1.5px dashed rgba(42,32,22,0.28);
       border-radius: var(--radius);
       padding: 2.5rem 1.5rem;
-      text-align: center;
-      cursor: pointer;
+      text-align: center; cursor: pointer;
+      background: rgba(240,235,224,0.88);
       transition: border-color 0.15s, background 0.15s;
-      background: var(--surface);
     }
     #drop-zone:hover, #drop-zone.drag-over {
-      border-color: var(--accent);
-      background: var(--surface-2);
+      border-color: var(--border-hi);
+      background: rgba(232,226,212,0.95);
     }
     #drop-zone.has-image {
-      padding: 0;
-      border-style: solid;
-      border-color: var(--border);
-      cursor: default;
+      padding: 0; border-style: solid;
+      border-color: var(--border); cursor: default;
+      background: var(--surface);
     }
     #file-input { display: none; }
     #preview-img {
-      width: 100%;
-      max-height: 360px;
-      object-fit: contain;
-      border-radius: calc(var(--radius) - 1px);
-      display: block;
+      width: 100%; max-height: 360px; object-fit: contain;
+      border-radius: calc(var(--radius) - 1px); display: block;
     }
 
     .upload-icon {
-      width: 44px; height: 44px;
-      margin: 0 auto 14px;
-      background: var(--surface-2);
-      border: 0.5px solid var(--border-md);
+      width: 42px; height: 42px; margin: 0 auto 14px;
+      background: rgba(42,32,22,0.10);
+      border: 1px solid rgba(42,32,22,0.18);
       border-radius: var(--radius-sm);
       display: flex; align-items: center; justify-content: center;
     }
-    .upload-icon svg { width: 20px; height: 20px; stroke: var(--text-3); fill: none; }
-    .upload-hint { font-size: 14px; color: var(--text-2); }
-    .upload-hint strong { color: var(--text); font-weight: 500; }
-    .upload-formats { font-size: 12px; color: var(--text-3); margin-top: 6px; }
+    .upload-icon svg { width: 18px; height: 18px; stroke: var(--text); fill: none; }
+    .upload-hint { font-size: 14px; color: var(--text); font-family: var(--font-serif); }
+    .upload-hint strong { font-weight: 700; }
+    .upload-formats { font-size: 11px; color: var(--text-3); margin-top: 6px; letter-spacing: 0.06em; }
 
-    /* Controls */
     #controls { margin-top: 10px; display: flex; gap: 8px; }
     #extract-btn {
-      flex: 1; padding: 11px 16px;
-      font-size: 14px; font-weight: 500;
-      background: var(--text); color: #fff;
+      flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700;
+      background: var(--btn-bg); color: var(--btn-text);
       border: none; border-radius: var(--radius-sm);
-      cursor: pointer; transition: opacity 0.15s;
-      display: none;
-      font-family: inherit;
+      cursor: pointer; display: none; font-family: var(--font-serif);
+      letter-spacing: 0.06em; text-transform: uppercase;
+      transition: opacity 0.15s;
     }
     #extract-btn:hover { opacity: 0.85; }
-    #extract-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    #extract-btn:disabled { opacity: 0.35; cursor: not-allowed; }
     #reset-btn {
-      padding: 11px 14px; font-size: 13px;
+      padding: 11px 14px; font-size: 12px;
       background: transparent;
-      border: 0.5px solid var(--border-md);
+      border: 1px solid var(--border-md);
       border-radius: var(--radius-sm);
-      cursor: pointer; color: var(--text-2);
-      display: none; transition: background 0.1s;
-      font-family: inherit;
+      cursor: pointer; color: var(--text-3);
+      display: none; font-family: var(--font-sans);
+      transition: background 0.1s, color 0.1s;
     }
-    #reset-btn:hover { background: var(--surface-2); }
+    #reset-btn:hover { background: var(--bg-2); color: var(--text); }
 
-    /* Progress */
     #progress-wrap { margin-top: 12px; display: none; }
     #progress-bar {
-      height: 2px; background: var(--surface-2);
+      height: 2px; background: rgba(42,32,22,0.12);
       border-radius: 99px; overflow: hidden;
     }
     #progress-fill {
-      height: 100%; background: var(--text);
+      height: 100%; background: var(--btn-bg);
       border-radius: 99px; width: 0%;
       transition: width 0.4s ease;
     }
-    #status-msg { font-size: 12px; color: var(--text-3); margin-top: 6px; text-align: center; }
+    #status-msg { font-size: 11px; color: var(--text-3); margin-top: 6px; text-align: center; }
 
-    /* Error */
     #error-box {
       margin-top: 10px; padding: 10px 14px; display: none;
-      background: var(--danger-bg);
-      border: 0.5px solid var(--danger-border);
-      border-radius: var(--radius-sm);
-      font-size: 13px; color: var(--danger-text);
+      background: var(--danger-bg); border: 1px solid var(--danger-bd);
+      border-radius: var(--radius-sm); font-size: 13px; color: var(--danger-tx);
     }
 
-    /* Result */
     #result-section { margin-top: 1.5rem; display: none; }
     .result-header {
       display: flex; align-items: center; justify-content: space-between;
       margin-bottom: 8px;
     }
-    .result-label { font-size: 13px; font-weight: 500; color: var(--text-2); }
+    .result-label {
+      font-size: 10px; font-weight: 500; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      font-family: var(--font-sans);
+    }
     #copy-btn {
-      font-size: 12px; padding: 4px 10px;
-      border: 0.5px solid var(--border-md);
-      border-radius: var(--radius-sm);
+      font-size: 11px; padding: 4px 10px;
+      border: 1px solid var(--border-md); border-radius: var(--radius-sm);
       background: transparent; cursor: pointer;
-      color: var(--text-2); transition: background 0.1s;
-      font-family: inherit;
+      color: var(--text-3); font-family: var(--font-sans);
+      transition: background 0.1s, color 0.1s;
     }
-    #copy-btn:hover { background: var(--surface-2); }
+    #copy-btn:hover { background: var(--bg-2); color: var(--text); }
     #result-box {
-      background: var(--surface);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      padding: 1rem 1.25rem;
-      font-size: 14px; line-height: 1.8;
-      color: var(--text);
-      white-space: pre-wrap;
-      word-break: break-word;
-      min-height: 80px;
-      font-family: 'Menlo', 'Consolas', monospace;
+      background: rgba(240,235,224,0.88);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm); padding: 1rem 1.25rem;
+      font-size: 14px; line-height: 1.8; color: var(--text);
+      white-space: pre-wrap; word-break: break-word; min-height: 80px;
+      font-family: var(--font-sans);
     }
-    #char-count { font-size: 12px; color: var(--text-3); margin-top: 6px; text-align: right; }
+    #char-count {
+      font-size: 10px; color: var(--text-3); margin-top: 6px;
+      text-align: right; font-family: var(--font-sans);
+    }
 
-    /* History */
-    #history-section { margin-top: 2.5rem; }
+    .divider { height: 1px; background: rgba(42,32,22,0.12); margin: 2rem 0; }
+
     .section-title {
-      font-size: 12px; font-weight: 500; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.06em;
-      margin-bottom: 10px;
+      font-size: 10px; font-weight: 500; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.08em;
+      margin-bottom: 10px; font-family: var(--font-sans);
     }
     #history-list { display: flex; flex-direction: column; gap: 6px; }
-    #history-empty { font-size: 13px; color: var(--text-3); text-align: center; padding: 1.5rem; }
+    #history-empty {
+      font-size: 13px; color: var(--text-3); text-align: center; padding: 1.5rem;
+      border: 1px dashed var(--border-md); border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+    }
 
     .history-item {
       display: flex; align-items: center; gap: 12px;
       padding: 10px 14px;
-      background: var(--surface);
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-sm);
+      background: var(--hist-bg);
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      transition: border-color 0.1s;
     }
+    .history-item:hover { border-color: var(--border-md); }
     .history-thumb {
-      width: 44px; height: 44px;
-      border-radius: 5px;
-      object-fit: cover;
-      flex-shrink: 0;
-      border: 0.5px solid var(--border);
+      width: 44px; height: 44px; border-radius: 3px; object-fit: cover;
+      flex-shrink: 0; border: 1px solid var(--border);
     }
     .thumb-expired {
-      width: 44px; height: 44px;
-      border-radius: 5px;
-      background: var(--surface-2);
-      border: 0.5px solid var(--border);
-      flex-shrink: 0;
-      display: flex; align-items: center; justify-content: center;
+      width: 44px; height: 44px; border-radius: 3px;
+      background: var(--thumb); border: 1px solid var(--border);
+      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
     }
-    .thumb-expired svg { width: 16px; height: 16px; stroke: var(--text-3); fill: none; }
+    .thumb-expired svg { width: 16px; height: 16px; stroke: var(--bg); fill: none; }
     .history-info { flex: 1; min-width: 0; }
     .history-name {
       font-size: 13px; font-weight: 500; color: var(--text);
       white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      font-family: var(--font-sans);
     }
-    .history-time { font-size: 12px; color: var(--text-3); margin-top: 2px; }
-    .history-expire { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .history-time {
+      font-size: 11px; color: var(--text-3); margin-top: 2px;
+      font-variant-numeric: tabular-nums; font-family: var(--font-sans);
+    }
+    .history-expire { font-size: 10px; color: var(--text-3); margin-top: 2px; font-family: var(--font-sans); }
     .expire-badge {
-      display: inline-block; font-size: 10px; padding: 1px 7px;
-      border-radius: 99px;
-      background: var(--warn-bg); color: var(--warn-text);
-      font-weight: 500;
+      display: inline-block; font-size: 9px; padding: 1px 7px; border-radius: 99px;
+      background: var(--expire-bg); color: var(--expire-tx); font-weight: 500;
     }
     .del-btn {
       font-size: 11px; padding: 3px 8px;
-      border: 0.5px solid var(--border);
-      border-radius: var(--radius-sm);
-      background: transparent; cursor: pointer;
-      color: var(--text-3); flex-shrink: 0;
+      border: 1px solid var(--border); border-radius: var(--radius-sm);
+      background: transparent; cursor: pointer; color: var(--text-3);
+      flex-shrink: 0; font-family: var(--font-sans);
       transition: color 0.1s, border-color 0.1s;
-      font-family: inherit;
     }
-    .del-btn:hover { color: var(--danger-text); border-color: var(--danger-border); }
+    .del-btn:hover { color: var(--danger-tx); border-color: var(--danger-bd); }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <div class="logo">booktotext <span>by nainn</span></div>
+      <div class="logo">booktotext <span style="font-weight:400;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;color:#7A6E58;letter-spacing:0;">by nainn</span></div>
       <div class="tagline">사진 속 텍스트를 추출해요 — Claude Vision 기반</div>
     </header>
 
-    <div id="drop-zone" onclick="onDropZoneClick(event)">
+    <div id="drop-zone" onclick="onDropZoneClick()">
       <div id="upload-placeholder">
         <div class="upload-icon">
           <svg viewBox="0 0 24 24" stroke-width="1.5">
@@ -267,6 +260,8 @@
       <p id="char-count"></p>
     </div>
 
+    <div class="divider"></div>
+
     <div id="history-section">
       <p class="section-title">업로드 기록</p>
       <div id="history-list">
@@ -281,24 +276,23 @@
     let imageBase64 = null;
     let imageMediaType = null;
 
-    const dropZone = document.getElementById('drop-zone');
-    const fileInput = document.getElementById('file-input');
-    const previewImg = document.getElementById('preview-img');
-    const uploadPlaceholder = document.getElementById('upload-placeholder');
-    const extractBtn = document.getElementById('extract-btn');
-    const resetBtn = document.getElementById('reset-btn');
+    const dropZone      = document.getElementById('drop-zone');
+    const fileInput     = document.getElementById('file-input');
+    const previewImg    = document.getElementById('preview-img');
+    const uploadPH      = document.getElementById('upload-placeholder');
+    const extractBtn    = document.getElementById('extract-btn');
+    const resetBtn      = document.getElementById('reset-btn');
     const resultSection = document.getElementById('result-section');
-    const resultBox = document.getElementById('result-box');
-    const charCount = document.getElementById('char-count');
-    const progressWrap = document.getElementById('progress-wrap');
-    const progressFill = document.getElementById('progress-fill');
-    const statusMsg = document.getElementById('status-msg');
-    const errorBox = document.getElementById('error-box');
-    const copyBtn = document.getElementById('copy-btn');
+    const resultBox     = document.getElementById('result-box');
+    const charCount     = document.getElementById('char-count');
+    const progressWrap  = document.getElementById('progress-wrap');
+    const progressFill  = document.getElementById('progress-fill');
+    const statusMsg     = document.getElementById('status-msg');
+    const errorBox      = document.getElementById('error-box');
+    const copyBtn       = document.getElementById('copy-btn');
 
-    function onDropZoneClick(e) {
-      if (dropZone.classList.contains('has-image')) return;
-      fileInput.click();
+    function onDropZoneClick() {
+      if (!dropZone.classList.contains('has-image')) fileInput.click();
     }
 
     dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
@@ -319,14 +313,18 @@
         imageMediaType = file.type;
         previewImg.src = dataUrl;
         previewImg.style.display = 'block';
-        uploadPlaceholder.style.display = 'none';
+        uploadPH.style.display = 'none';
         dropZone.classList.add('has-image');
         extractBtn.style.display = 'flex';
         resetBtn.style.display = 'flex';
         resultSection.style.display = 'none';
 
         const now = Date.now();
-        const entry = { id: now, name: file.name, thumb: dataUrl, uploadedAt: now, expiresAt: now + EXPIRE_MS, expired: false, timer: null };
+        const entry = {
+          id: now, name: file.name, thumb: dataUrl,
+          uploadedAt: now, expiresAt: now + EXPIRE_MS,
+          expired: false, timer: null
+        };
         entry.timer = setTimeout(() => expireEntry(entry.id), EXPIRE_MS);
         uploads.unshift(entry);
         renderHistory();
@@ -360,8 +358,11 @@
       if (diff <= 0) return '만료됨';
       const h = Math.floor(diff / 3600000);
       const m = Math.floor((diff % 3600000) / 60000);
-      if (h > 0) return `${h}시간 ${m}분 후 자동 삭제`;
-      return `${m}분 후 자동 삭제`;
+      return h > 0 ? `${h}시간 ${m}분 후 자동 삭제` : `${m}분 후 자동 삭제`;
+    }
+
+    function escHtml(s) {
+      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
     function renderHistory() {
@@ -374,14 +375,12 @@
         <div class="history-item">
           ${u.expired
             ? `<div class="thumb-expired"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>`
-            : `<img class="history-thumb" src="${u.thumb}" alt="${u.name}" />`}
+            : `<img class="history-thumb" src="${u.thumb}" alt="${escHtml(u.name)}" />`}
           <div class="history-info">
-            <div class="history-name">${u.name}</div>
+            <div class="history-name">${escHtml(u.name)}</div>
             <div class="history-time">${formatTime(u.uploadedAt)}</div>
-            <div class="history-expire">
-              ${u.expired
-                ? '<span class="expire-badge">만료 — 사진 삭제됨</span>'
-                : formatExpire(u.expiresAt)}
+            <div class="history-expire" data-id="${u.id}">
+              ${u.expired ? '<span class="expire-badge">만료 — 사진 삭제됨</span>' : formatExpire(u.expiresAt)}
             </div>
           </div>
           <button class="del-btn" onclick="deleteEntry(${u.id})">삭제</button>
@@ -390,8 +389,9 @@
     }
 
     setInterval(() => {
-      document.querySelectorAll('.history-expire').forEach((el, i) => {
-        const u = uploads[i];
+      document.querySelectorAll('.history-expire[data-id]').forEach(el => {
+        const id = Number(el.dataset.id);
+        const u = uploads.find(u => u.id === id);
         if (u && !u.expired) el.textContent = formatExpire(u.expiresAt);
       });
     }, 30000);
@@ -399,7 +399,7 @@
     function resetUpload() {
       imageBase64 = null; imageMediaType = null;
       previewImg.src = ''; previewImg.style.display = 'none';
-      uploadPlaceholder.style.display = 'block';
+      uploadPH.style.display = 'block';
       dropZone.classList.remove('has-image');
       extractBtn.style.display = 'none'; resetBtn.style.display = 'none';
       resultSection.style.display = 'none';
@@ -423,7 +423,7 @@
             max_tokens: 1000,
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: imageMediaType, data: imageBase64 } },
-              { type: 'text', text: '이 이미지에 있는 모든 텍스트를 정확하게 추출해줘. 이미지에 보이는 텍스트만 그대로 출력하고, 다른 설명이나 부연은 전혀 붙이지 마. 텍스트가 없으면 "[텍스트 없음]"이라고만 출력해.' }
+              { type: 'text', text: '이 이미지에 있는 텍스트를 그대로 추출해줘. 반드시 다음 규칙을 따라:\n1. 이미지에 실제로 보이는 글자만 출력해. 절대로 문맥을 보완하거나 추측해서 바꾸지 마.\n2. 손글씨처럼 알아보기 어려운 글자가 있으면 [?] 로 표시해. 억지로 읽으려고 하지 마.\n3. 글자가 번진 부분, 겹친 부분, 확실히 판독되지 않는 부분도 [?] 로 남겨.\n4. 설명, 요약, 부연 없이 텍스트만 출력해.\n5. 텍스트가 없으면 [텍스트 없음] 이라고만 출력해.' }
             ]}]
           })
         });
