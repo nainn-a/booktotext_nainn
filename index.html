@@ -8,28 +8,27 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:          #FAF8F3;
-      --bg-2:        #F2EEE6;
-      --surface:     #EDE9DF;
-      --hist-bg:     rgba(208,200,182,0.82);
-      --border:      rgba(42,32,22,0.10);
-      --border-md:   rgba(42,32,22,0.20);
-      --border-hi:   rgba(42,32,22,0.40);
-      --text:        #2A2016;
-      --text-3:      #7A6E58;
-      --thumb:       #8A7E68;
-      --btn-bg:      #2A2016;
-      --btn-text:    #F2EEE4;
-      --danger-bg:   rgba(160,48,32,0.08);
-      --danger-bd:   rgba(160,48,32,0.22);
-      --danger-tx:   #903020;
-      --expire-bg:   rgba(122,110,88,0.15);
-      --expire-tx:   #7A6E58;
-      --fs:          'Helvetica Neue', Helvetica, Arial, sans-serif;
-      --ff:          Georgia, 'Times New Roman', serif;
-      --fm:          'Menlo', 'Consolas', monospace;
-      --r:           10px;
-      --rs:          4px;
+      --bg:        #FAF8F3;
+      --bg-2:      #F2EEE6;
+      --surface:   #EDE9DF;
+      --hist-bg:   rgba(208,200,182,0.82);
+      --border:    rgba(42,32,22,0.10);
+      --border-md: rgba(42,32,22,0.20);
+      --border-hi: rgba(42,32,22,0.40);
+      --text:      #2A2016;
+      --text-3:    #7A6E58;
+      --thumb:     #8A7E68;
+      --btn-bg:    #2A2016;
+      --btn-text:  #F2EEE4;
+      --danger-bg: rgba(160,48,32,0.08);
+      --danger-bd: rgba(160,48,32,0.22);
+      --danger-tx: #903020;
+      --expire-bg: rgba(122,110,88,0.15);
+      --expire-tx: #7A6E58;
+      --fs: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --ff: Georgia, 'Times New Roman', serif;
+      --r:  10px;
+      --rs: 4px;
     }
 
     body {
@@ -44,7 +43,7 @@
 
     .wrap { max-width: 640px; margin: 0 auto; }
 
-    header { margin-bottom: 1.25rem; }
+    header { margin-bottom: 1.5rem; }
     .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.04em; color: var(--text); font-family: var(--ff); }
     .logo-sub { font-weight: 400; font-family: var(--fs); font-size: 13px; color: var(--text-3); letter-spacing: 0; }
     .tagline { font-size: 12px; color: var(--text-3); margin-top: 4px; }
@@ -53,40 +52,50 @@
     #sync-dot.ok  { background: #7A9A6A; }
     #sync-dot.err { background: #903020; }
 
-    /* ID 패널 */
-    .id-panel-toggle {
-      width: 100%; display: flex; align-items: center; justify-content: space-between;
-      background: transparent; border: none; cursor: pointer; padding: 0;
-      font-size: 10px; font-weight: 500; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--fs);
+    /* 로그인 화면 */
+    #login-screen {
+      margin-top: 3rem; text-align: center;
+      display: flex; flex-direction: column; align-items: center; gap: 16px;
     }
-    .id-panel-toggle:hover { color: var(--text); }
-    .id-panel {
-      margin-bottom: 1.5rem;
+    #login-screen p { font-size: 13px; color: var(--text-3); }
+    #google-login-btn {
+      display: inline-flex; align-items: center; gap: 10px;
+      padding: 10px 20px; font-size: 13px; font-weight: 500;
+      border: 1px solid var(--border-md); border-radius: var(--rs);
+      background: var(--surface); cursor: pointer; color: var(--text);
+      font-family: var(--fs); transition: background 0.1s;
+    }
+    #google-login-btn:hover { background: var(--bg-2); }
+    #google-login-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
+
+    /* 유저 정보 */
+    #user-bar {
+      display: none; align-items: center; justify-content: space-between;
+      margin-bottom: 1.25rem; padding: 8px 12px;
       background: rgba(240,235,224,0.88);
-      border: 1px solid var(--border-md);
+      border: 1px solid var(--border);
       border-radius: var(--rs);
-      padding: 12px 14px;
     }
-    .id-panel-title { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
-    .id-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
-    .id-display { flex: 1; font-size: 11px; font-family: var(--fm); color: var(--text); background: rgba(42,32,22,0.06); border: 1px solid var(--border); border-radius: var(--rs); padding: 6px 8px; word-break: break-all; line-height: 1.5; }
-    .id-hint { font-size: 10px; color: var(--text-3); margin-bottom: 6px; }
-    .id-import-row { display: flex; align-items: center; gap: 6px; }
-    .id-input { flex: 1; font-size: 11px; font-family: var(--fm); color: var(--text); background: rgba(42,32,22,0.04); border: 1px solid var(--border-md); border-radius: var(--rs); padding: 6px 8px; outline: none; }
-    .sm-btn { flex-shrink: 0; font-size: 11px; padding: 6px 10px; border: 1px solid var(--border-md); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); white-space: nowrap; transition: background 0.1s; }
-    .sm-btn:hover { background: var(--bg-2); }
-    #import-msg { font-size: 10px; color: var(--text-3); margin-top: 5px; display: none; }
+    #user-bar.visible { display: flex; }
+    .user-info { display: flex; align-items: center; gap: 8px; }
+    .user-avatar { width: 24px; height: 24px; border-radius: 50%; }
+    .user-name { font-size: 12px; color: var(--text-3); }
+    #logout-btn {
+      font-size: 11px; padding: 3px 9px;
+      border: 1px solid var(--border-md); border-radius: var(--rs);
+      background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs);
+    }
+    #logout-btn:hover { background: var(--bg-2); }
+
+    /* 앱 본체 */
+    #app-screen { display: none; }
+    #app-screen.visible { display: block; }
 
     /* 드롭존 */
     #drop-zone {
-      border: 1.5px dashed rgba(42,32,22,0.28);
-      border-radius: var(--r);
-      padding: 2.5rem 1.5rem;
-      text-align: center; cursor: pointer;
-      background: rgba(240,235,224,0.88);
-      transition: border-color 0.15s, background 0.15s;
-      user-select: none;
+      border: 1.5px dashed rgba(42,32,22,0.28); border-radius: var(--r);
+      padding: 2.5rem 1.5rem; text-align: center; cursor: pointer;
+      background: rgba(240,235,224,0.88); transition: border-color 0.15s, background 0.15s;
     }
     #drop-zone:hover, #drop-zone.over { border-color: var(--border-hi); background: rgba(232,226,212,0.95); }
     #drop-zone.filled { padding: 0; border-style: solid; border-color: var(--border); cursor: default; background: var(--surface); }
@@ -99,24 +108,20 @@
     .up-hint strong { font-weight: 700; }
     .up-fmt { font-size: 11px; color: var(--text-3); margin-top: 6px; letter-spacing: 0.06em; }
 
-    /* 버튼 */
     #controls { margin-top: 10px; display: flex; gap: 8px; }
-    #extract-btn { flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--rs); cursor: pointer; display: none; font-family: var(--ff); letter-spacing: 0.06em; text-transform: uppercase; transition: opacity 0.15s; text-align: center; justify-content: center; }
+    #extract-btn { flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--rs); cursor: pointer; display: none; font-family: var(--ff); letter-spacing: 0.06em; text-transform: uppercase; text-align: center; transition: opacity 0.15s; }
     #extract-btn:hover { opacity: 0.85; }
     #extract-btn:disabled { opacity: 0.35; cursor: not-allowed; }
     #reset-btn { padding: 11px 14px; font-size: 12px; background: transparent; border: 1px solid var(--border-md); border-radius: var(--rs); cursor: pointer; color: var(--text-3); display: none; font-family: var(--fs); transition: background 0.1s; }
     #reset-btn:hover { background: var(--bg-2); }
 
-    /* 진행 */
     #prog-wrap { margin-top: 12px; display: none; }
     #prog-bar { height: 2px; background: rgba(42,32,22,0.12); border-radius: 99px; overflow: hidden; }
     #prog-fill { height: 100%; background: var(--btn-bg); border-radius: 99px; width: 0%; transition: width 0.4s ease; }
     #status-msg { font-size: 11px; color: var(--text-3); margin-top: 6px; text-align: center; }
 
-    /* 에러 */
     #error-box { margin-top: 10px; padding: 10px 14px; display: none; background: var(--danger-bg); border: 1px solid var(--danger-bd); border-radius: var(--rs); font-size: 13px; color: var(--danger-tx); }
 
-    /* 결과 */
     #result-sec { margin-top: 1.5rem; display: none; }
     .res-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
     .res-lbl { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; }
@@ -126,14 +131,12 @@
     #char-count { font-size: 10px; color: var(--text-3); margin-top: 6px; text-align: right; }
 
     .divider { height: 1px; background: rgba(42,32,22,0.12); margin: 2rem 0; }
-
-    /* 기록 */
     .sec-title { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
     #hist-list { display: flex; flex-direction: column; gap: 6px; }
     #hist-empty { font-size: 13px; color: var(--text-3); text-align: center; padding: 1.5rem; border: 1px dashed var(--border-md); border-radius: var(--rs); }
 
-    .hi { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--hist-bg); border: 1px solid var(--border); border-radius: var(--rs); transition: border-color 0.1s; }
-    .hi:hover { border-color: var(--border-md); }
+    .hi { display: flex; flex-direction: column; padding: 10px 14px; background: var(--hist-bg); border: 1px solid var(--border); border-radius: var(--rs); }
+    .hi-top { display: flex; align-items: center; gap: 12px; }
     .hi-thumb { width: 44px; height: 44px; border-radius: 3px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); }
     .hi-exp-thumb { width: 44px; height: 44px; border-radius: 3px; background: var(--thumb); border: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
     .hi-exp-thumb svg { width: 16px; height: 16px; stroke: var(--bg); fill: none; }
@@ -142,24 +145,12 @@
     .hi-time { font-size: 11px; color: var(--text-3); margin-top: 2px; font-variant-numeric: tabular-nums; }
     .hi-expire { font-size: 10px; color: var(--text-3); margin-top: 2px; }
     .exp-badge { display: inline-block; font-size: 9px; padding: 1px 7px; border-radius: 99px; background: var(--expire-bg); color: var(--expire-tx); font-weight: 500; }
-    .text-toggle-btn {
-      flex-shrink: 0; font-size: 10px; padding: 2px 7px;
-      border: 1px solid var(--border-md); border-radius: var(--rs);
-      background: transparent; cursor: pointer; color: var(--text-3);
-      font-family: var(--fs); white-space: nowrap; transition: background 0.1s;
-    }
+    .hi-btns { display: flex; gap: 5px; flex-shrink: 0; }
+    .text-toggle-btn { font-size: 11px; padding: 3px 8px; border: 1px solid var(--border-md); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); white-space: nowrap; transition: background 0.1s; }
     .text-toggle-btn:hover { background: var(--bg-2); color: var(--text); }
-    .hi-text {
-      margin-top: 8px; padding: 8px 10px;
-      background: rgba(240,235,224,0.7);
-      border: 1px solid var(--border);
-      border-radius: var(--rs);
-      font-size: 12px; line-height: 1.7; color: var(--text);
-      white-space: pre-wrap; word-break: break-word;
-      font-family: var(--fs);
-    }
-    .del-btn { font-size: 11px; padding: 3px 8px; border: 1px solid var(--border); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); flex-shrink: 0; font-family: var(--fs); transition: color 0.1s, border-color 0.1s; }
+    .del-btn { font-size: 11px; padding: 3px 8px; border: 1px solid var(--border); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); transition: color 0.1s, border-color 0.1s; }
     .del-btn:hover { color: var(--danger-tx); border-color: var(--danger-bd); }
+    .hi-text { margin-top: 8px; padding: 8px 10px; background: rgba(240,235,224,0.7); border: 1px solid var(--border); border-radius: var(--rs); font-size: 12px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; font-family: var(--fs); }
   </style>
 </head>
 <body>
@@ -170,133 +161,153 @@
     <div id="sync-status"><span id="sync-dot"></span><span id="sync-label">연결 중...</span></div>
   </header>
 
-  <!-- 기기 ID 패널 -->
-  <div class="id-panel">
-    <button class="id-panel-toggle" id="id-panel-toggle">
-      <span>기기 ID 동기화</span>
-      <span id="id-arrow" style="font-size:9px; display:inline-block; transition:transform 0.2s;">▼</span>
+  <!-- 로그인 화면 -->
+  <div id="login-screen">
+    <p>Google 계정으로 로그인하면 모든 기기에서 기록이 동기화돼요</p>
+    <button id="google-login-btn">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/>
+        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+      </svg>
+      Google로 로그인
     </button>
-    <div id="id-panel-body" style="display:none; margin-top:10px;">
-      <div class="id-row">
-        <div class="id-display" id="id-display"></div>
-        <button class="sm-btn" id="copy-id-btn">복사</button>
-      </div>
-      <div class="id-hint">다른 기기의 ID를 붙여넣으면 같은 기록을 공유해요</div>
-      <div class="id-import-row">
-        <input class="id-input" id="import-input" type="text" placeholder="다른 기기 ID 붙여넣기..." />
-        <button class="sm-btn" id="import-btn">적용</button>
-      </div>
-      <div id="import-msg"></div>
+  </div>
+
+  <!-- 유저 바 -->
+  <div id="user-bar">
+    <div class="user-info">
+      <img class="user-avatar" id="user-avatar" src="" alt="" />
+      <span class="user-name" id="user-name"></span>
     </div>
+    <button id="logout-btn">로그아웃</button>
   </div>
 
-  <!-- 드롭존 -->
-  <div id="drop-zone">
-    <div id="up-ph">
-      <div class="up-icon">
-        <svg viewBox="0 0 24 24" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-        </svg>
+  <!-- 앱 본체 -->
+  <div id="app-screen">
+    <div id="drop-zone">
+      <div id="up-ph">
+        <div class="up-icon">
+          <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
+        </div>
+        <p class="up-hint"><strong>클릭하거나 드래그</strong>해서 사진 업로드</p>
+        <p class="up-fmt">JPG · PNG · WEBP · GIF · BMP</p>
       </div>
-      <p class="up-hint"><strong>클릭하거나 드래그</strong>해서 사진 업로드</p>
-      <p class="up-fmt">JPG · PNG · WEBP · GIF · BMP</p>
+      <img id="preview-img" style="display:none;" alt="preview" />
     </div>
-    <img id="preview-img" style="display:none;" alt="preview" />
+    <input type="file" id="file-input" accept="image/*" />
+
+    <div id="controls">
+      <button id="extract-btn">텍스트 추출하기</button>
+      <button id="reset-btn">다시 선택</button>
+    </div>
+
+    <div id="prog-wrap"><div id="prog-bar"><div id="prog-fill"></div></div><p id="status-msg"></p></div>
+    <div id="error-box"></div>
+
+    <div id="result-sec">
+      <div class="res-hd"><span class="res-lbl">추출된 텍스트</span><button id="copy-btn">복사</button></div>
+      <div id="result-box"></div>
+      <p id="char-count"></p>
+    </div>
+
+    <div class="divider"></div>
+    <p class="sec-title">업로드 기록</p>
+    <div id="hist-list"><p id="hist-empty">아직 업로드된 사진이 없어요</p></div>
   </div>
-  <input type="file" id="file-input" accept="image/*" />
-
-  <div id="controls">
-    <button id="extract-btn">텍스트 추출하기</button>
-    <button id="reset-btn">다시 선택</button>
-  </div>
-
-  <div id="prog-wrap"><div id="prog-bar"><div id="prog-fill"></div></div><p id="status-msg"></p></div>
-  <div id="error-box"></div>
-
-  <div id="result-sec">
-    <div class="res-hd"><span class="res-lbl">추출된 텍스트</span><button id="copy-btn">복사</button></div>
-    <div id="result-box"></div>
-    <p id="char-count"></p>
-  </div>
-
-  <div class="divider"></div>
-
-  <p class="sec-title">업로드 기록</p>
-  <div id="hist-list"><p id="hist-empty">아직 업로드된 사진이 없어요</p></div>
 </div>
 
 <script type="module">
-import { initializeApp }       from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDocs }
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc,
+  onSnapshot, query, orderBy, getDocs }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-/* ── Firebase 초기화 (환경변수에서 config 수신) ── */
+/* ── Firebase 초기화 ── */
 const firebaseConfig = await fetch('/api/firebase-config').then(r => r.json());
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app  = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db   = getFirestore(app);
 
-/* ── 상수 / 상태 ── */
 const EXPIRE_MS = 30 * 24 * 60 * 60 * 1000;
 let b64 = null, mime = null, currentDocId = null;
-
-/* ── 기기 ID ── */
-function getDeviceId() {
-  let id = localStorage.getItem('btt_device_id');
-  if (!id) { id = crypto.randomUUID(); localStorage.setItem('btt_device_id', id); }
-  return id;
-}
-let DEVICE_ID = getDeviceId();
-let uploadsCol = collection(db, 'users', DEVICE_ID, 'uploads');
+let uploadsCol = null, unsubscribe = null;
 
 /* ── DOM ── */
-const dz         = document.getElementById('drop-zone');
-const fi         = document.getElementById('file-input');
-const pi         = document.getElementById('preview-img');
-const ph         = document.getElementById('up-ph');
-const xBtn       = document.getElementById('extract-btn');
-const rBtn       = document.getElementById('reset-btn');
-const resSec     = document.getElementById('result-sec');
-const resBox     = document.getElementById('result-box');
-const charCount  = document.getElementById('char-count');
-const progWrap   = document.getElementById('prog-wrap');
-const progFill   = document.getElementById('prog-fill');
-const statusMsg  = document.getElementById('status-msg');
-const errBox     = document.getElementById('error-box');
-const copyBtn    = document.getElementById('copy-btn');
-const syncDot    = document.getElementById('sync-dot');
-const syncLabel  = document.getElementById('sync-label');
-const idDisplay  = document.getElementById('id-display');
-const copyIdBtn  = document.getElementById('copy-id-btn');
-const importInput= document.getElementById('import-input');
-const importBtn  = document.getElementById('import-btn');
-const importMsg  = document.getElementById('import-msg');
-
-/* ── ID 패널 초기화 ── */
-idDisplay.textContent = DEVICE_ID;
+const loginScreen = document.getElementById('login-screen');
+const userBar     = document.getElementById('user-bar');
+const appScreen   = document.getElementById('app-screen');
+const userAvatar  = document.getElementById('user-avatar');
+const userName    = document.getElementById('user-name');
+const logoutBtn   = document.getElementById('logout-btn');
+const googleBtn   = document.getElementById('google-login-btn');
+const dz          = document.getElementById('drop-zone');
+const fi          = document.getElementById('file-input');
+const pi          = document.getElementById('preview-img');
+const ph          = document.getElementById('up-ph');
+const xBtn        = document.getElementById('extract-btn');
+const rBtn        = document.getElementById('reset-btn');
+const resSec      = document.getElementById('result-sec');
+const resBox      = document.getElementById('result-box');
+const charCount   = document.getElementById('char-count');
+const progWrap    = document.getElementById('prog-wrap');
+const progFill    = document.getElementById('prog-fill');
+const statusMsg   = document.getElementById('status-msg');
+const errBox      = document.getElementById('error-box');
+const copyBtn     = document.getElementById('copy-btn');
+const syncDot     = document.getElementById('sync-dot');
+const syncLabel   = document.getElementById('sync-label');
 
 /* ── 동기화 상태 ── */
 function setSyncStatus(s) {
-  syncDot.className = s === 'ok' ? 'ok' : s === 'err' ? 'err' : '';
+  syncDot.className = s;
   syncLabel.textContent = s === 'ok' ? '동기화됨' : s === 'err' ? '연결 오류' : '동기화 중...';
 }
 
+/* ── 인증 상태 감지 ── */
+onAuthStateChanged(auth, user => {
+  if (user) {
+    loginScreen.style.display = 'none';
+    userBar.classList.add('visible');
+    appScreen.classList.add('visible');
+    userAvatar.src = user.photoURL || '';
+    userName.textContent = user.displayName || user.email;
+    uploadsCol = collection(db, 'users', user.uid, 'uploads');
+    startListening();
+    setSyncStatus('ok');
+  } else {
+    loginScreen.style.display = 'flex';
+    userBar.classList.remove('visible');
+    appScreen.classList.remove('visible');
+    if (unsubscribe) { unsubscribe(); unsubscribe = null; }
+    setSyncStatus('err');
+    syncLabel.textContent = '로그인 필요';
+  }
+});
+
+/* ── Google 로그인 / 로그아웃 ── */
+googleBtn.addEventListener('click', () => {
+  signInWithPopup(auth, new GoogleAuthProvider()).catch(e => console.error(e));
+});
+logoutBtn.addEventListener('click', () => signOut(auth));
+
 /* ── Firestore 실시간 리스닝 ── */
-let unsubscribe = null;
 function startListening() {
   if (unsubscribe) unsubscribe();
-  uploadsCol = collection(db, 'users', DEVICE_ID, 'uploads');
   const q = query(uploadsCol, orderBy('uploadedAt', 'desc'));
   unsubscribe = onSnapshot(q,
     snap => { setSyncStatus('ok'); renderHistory(snap.docs.map(d => ({ id: d.id, ...d.data() }))); },
     ()   => setSyncStatus('err')
   );
 }
-startListening();
 
-/* ── 드롭존 이벤트 ── */
+/* ── 드롭존 ── */
 dz.addEventListener('click', () => { if (!dz.classList.contains('filled')) fi.click(); });
 dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
-dz.addEventListener('dragleave', ()=> dz.classList.remove('over'));
+dz.addEventListener('dragleave', () => dz.classList.remove('over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('over');
   if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
@@ -312,11 +323,9 @@ function handleFile(file) {
     const url = ev.target.result;
     b64 = url.split(',')[1]; mime = file.type;
     pi.src = url; pi.style.display = 'block';
-    ph.style.display = 'none';
-    dz.classList.add('filled');
+    ph.style.display = 'none'; dz.classList.add('filled');
     xBtn.style.display = 'flex'; rBtn.style.display = 'flex';
     resSec.style.display = 'none';
-
     const now = Date.now();
     currentDocId = String(now);
     setSyncStatus('ing');
@@ -336,15 +345,23 @@ window.deleteEntry = async id => {
   catch { setSyncStatus('err'); }
 };
 
-/* ── 렌더 ── */
+/* ── 텍스트 토글 ── */
+window.toggleText = (id, btn) => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const open = el.style.display === 'none';
+  el.style.display = open ? 'block' : 'none';
+  btn.textContent = open ? '텍스트 ▲' : '텍스트 ▼';
+};
+
+/* ── 렌더링 ── */
 function fmt(ts) {
   const d = new Date(ts), p = n => String(n).padStart(2,'0');
   return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 }
 function fmtExp(exp) {
   const diff = exp - Date.now(); if (diff <= 0) return '만료됨';
-  const d = Math.floor(diff/86400000);
-  const h = Math.floor((diff%86400000)/3600000);
+  const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000);
   if (d > 0) return `${d}일 ${h}시간 후 자동 삭제`;
   const m = Math.floor((diff%3600000)/60000);
   return h > 0 ? `${h}시간 ${m}분 후 자동 삭제` : `${m}분 후 자동 삭제`;
@@ -359,25 +376,28 @@ function renderHistory(uploads) {
     const expired = u.expiresAt < now;
     const hasText = u.extractedText && u.extractedText.trim().length > 0;
     return `<div class="hi">
-      ${expired || !u.thumb
-        ? `<div class="hi-exp-thumb"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>`
-        : `<img class="hi-thumb" src="${u.thumb}" alt="${esc(u.name)}" />`}
-      <div class="hi-info" style="min-width:0;flex:1;">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+      <div class="hi-top">
+        ${expired || !u.thumb
+          ? `<div class="hi-exp-thumb"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>`
+          : `<img class="hi-thumb" src="${u.thumb}" alt="${esc(u.name)}" />`}
+        <div class="hi-info">
           <div class="hi-name">${esc(u.name)}</div>
-          ${hasText ? `<button class="text-toggle-btn" onclick="toggleText('txt-${u.id}', this)">텍스트 ▼</button>` : ''}
+          <div class="hi-time">${fmt(u.uploadedAt)}</div>
+          <div class="hi-expire">${expired ? '<span class="exp-badge">만료 — 사진 삭제됨</span>' : fmtExp(u.expiresAt)}</div>
         </div>
-        <div class="hi-time">${fmt(u.uploadedAt)}</div>
-        <div class="hi-expire">${expired ? '<span class="exp-badge">만료 — 사진 삭제됨</span>' : fmtExp(u.expiresAt)}</div>
-        ${hasText ? `<div id="txt-${u.id}" class="hi-text" style="display:none;">${esc(u.extractedText)}</div>` : ''}
+        <div class="hi-btns">
+          ${hasText ? `<button class="text-toggle-btn" onclick="toggleText('txt-${u.id}', this)">텍스트 ▼</button>` : ''}
+          <button class="del-btn" onclick="deleteEntry('${u.id}')">삭제</button>
+        </div>
       </div>
-      <button class="del-btn" onclick="deleteEntry('${u.id}')">삭제</button>
+      ${hasText ? `<div id="txt-${u.id}" class="hi-text" style="display:none;">${esc(u.extractedText)}</div>` : ''}
     </div>`;
   }).join('');
 }
 
-/* ── 만료 항목 정리 (1시간마다) ── */
+/* ── 만료 정리 (1시간마다) ── */
 setInterval(async () => {
+  if (!uploadsCol) return;
   const now = Date.now();
   const snap = await getDocs(uploadsCol);
   snap.forEach(d => { if (d.data().expiresAt < now) deleteDoc(doc(uploadsCol, d.id)); });
@@ -396,7 +416,7 @@ xBtn.addEventListener('click', async () => {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        model: 'claude-sonnet-4-20250514', max_tokens: 2000,
         messages: [{ role: 'user', content: [
           { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } },
           { type: 'text', text: '이 이미지에 있는 텍스트를 그대로 추출해줘. 반드시 다음 규칙을 따라:\n1. 이미지에 실제로 보이는 글자만 출력해. 절대로 문맥을 보완하거나 추측해서 바꾸지 마.\n2. 손글씨처럼 알아보기 어려운 글자가 있으면 [?] 로 표시해. 억지로 읽으려고 하지 마.\n3. 글자가 번진 부분, 겹친 부분, 확실히 판독되지 않는 부분도 [?] 로 남겨.\n4. 설명, 요약, 부연 없이 텍스트만 출력해.\n5. 텍스트가 없으면 [텍스트 없음] 이라고만 출력해.' }
@@ -414,10 +434,8 @@ xBtn.addEventListener('click', async () => {
       charCount.textContent = `${text.replace(/\s/g,'').length}자 (공백 제외)`;
       resSec.style.display = 'block';
       xBtn.disabled = false; xBtn.textContent = '다시 추출';
-      if (currentDocId) {
-        import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
-          .then(m => m.updateDoc(doc(uploadsCol, currentDocId), { extractedText: text }))
-          .catch(() => {});
+      if (currentDocId && uploadsCol) {
+        updateDoc(doc(uploadsCol, currentDocId), { extractedText: text }).catch(() => {});
       }
     }, 300);
   } catch(e) {
@@ -429,7 +447,7 @@ xBtn.addEventListener('click', async () => {
 
 /* ── 리셋 ── */
 rBtn.addEventListener('click', () => {
-  b64 = null; mime = null;
+  b64 = null; mime = null; currentDocId = null;
   pi.src = ''; pi.style.display = 'none'; ph.style.display = 'block';
   dz.classList.remove('filled');
   xBtn.style.display = 'none'; rBtn.style.display = 'none';
@@ -450,57 +468,6 @@ copyBtn.addEventListener('click', () => {
     copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
   });
 });
-
-/* ── ID 복사 ── */
-copyIdBtn.addEventListener('click', () => {
-  navigator.clipboard.writeText(DEVICE_ID).then(() => {
-    copyIdBtn.textContent = '복사됨'; setTimeout(() => copyIdBtn.textContent = '복사', 1500);
-  });
-});
-
-/* ── 패널 토글 ── */
-const idToggleBtn  = document.getElementById('id-panel-toggle');
-const idPanelBody  = document.getElementById('id-panel-body');
-const idArrow      = document.getElementById('id-arrow');
-
-idToggleBtn.addEventListener('click', () => {
-  const isOpen = idPanelBody.style.display !== 'none';
-  idPanelBody.style.display   = isOpen ? 'none' : 'block';
-  idArrow.style.transform     = isOpen ? 'rotate(0deg)' : 'rotate(-180deg)';
-});
-
-/* ── ID 가져오기 ── */
-importBtn.addEventListener('click', applyImport);
-importInput.addEventListener('keydown', e => { if (e.key === 'Enter') applyImport(); });
-
-function applyImport() {
-  const val = importInput.value.trim();
-  if (!val || val.length < 8) {
-    importMsg.style.display = 'block'; importMsg.style.color = '#903020';
-    importMsg.textContent = 'ID가 올바르지 않아요.'; return;
-  }
-  DEVICE_ID = val;
-  localStorage.setItem('btt_device_id', val);
-  idDisplay.textContent = val;
-  importMsg.style.display = 'block'; importMsg.style.color = '#7A6E58';
-  importMsg.textContent = '적용됐어요. 기록을 불러오는 중...';
-  startListening();
-  setTimeout(() => {
-    importMsg.textContent = '동기화 완료!';
-    setTimeout(() => {
-      idPanelBody.style.display = 'none';
-      idArrow.style.transform = 'rotate(0deg)';
-    }, 1000);
-  }, 1200);
-}
-
-window.toggleText = function(id, btn) {
-  const el = document.getElementById(id);
-  if (!el) return;
-  const open = el.style.display === 'none';
-  el.style.display = open ? 'block' : 'none';
-  btn.textContent = open ? '텍스트 ▲' : '텍스트 ▼';
-};
 
 function showErr(msg) { errBox.textContent = msg; errBox.style.display = 'block'; }
 function hideErr() { errBox.style.display = 'none'; }
