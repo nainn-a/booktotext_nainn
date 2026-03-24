@@ -142,6 +142,22 @@
     .hi-time { font-size: 11px; color: var(--text-3); margin-top: 2px; font-variant-numeric: tabular-nums; }
     .hi-expire { font-size: 10px; color: var(--text-3); margin-top: 2px; }
     .exp-badge { display: inline-block; font-size: 9px; padding: 1px 7px; border-radius: 99px; background: var(--expire-bg); color: var(--expire-tx); font-weight: 500; }
+    .text-toggle-btn {
+      flex-shrink: 0; font-size: 10px; padding: 2px 7px;
+      border: 1px solid var(--border-md); border-radius: var(--rs);
+      background: transparent; cursor: pointer; color: var(--text-3);
+      font-family: var(--fs); white-space: nowrap; transition: background 0.1s;
+    }
+    .text-toggle-btn:hover { background: var(--bg-2); color: var(--text); }
+    .hi-text {
+      margin-top: 8px; padding: 8px 10px;
+      background: rgba(240,235,224,0.7);
+      border: 1px solid var(--border);
+      border-radius: var(--rs);
+      font-size: 12px; line-height: 1.7; color: var(--text);
+      white-space: pre-wrap; word-break: break-word;
+      font-family: var(--fs);
+    }
     .del-btn { font-size: 11px; padding: 3px 8px; border: 1px solid var(--border); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); flex-shrink: 0; font-family: var(--fs); transition: color 0.1s, border-color 0.1s; }
     .del-btn:hover { color: var(--danger-tx); border-color: var(--danger-bd); }
   </style>
@@ -220,8 +236,8 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* ── 상수 / 상태 ── */
-const EXPIRE_MS = 24 * 60 * 60 * 1000;
-let b64 = null, mime = null;
+const EXPIRE_MS = 30 * 24 * 60 * 60 * 1000;
+let b64 = null, mime = null, currentDocId = null;
 
 /* ── 기기 ID ── */
 function getDeviceId() {
@@ -302,10 +318,12 @@ function handleFile(file) {
     resSec.style.display = 'none';
 
     const now = Date.now();
+    currentDocId = String(now);
     setSyncStatus('ing');
-    setDoc(doc(uploadsCol, String(now)), {
+    setDoc(doc(uploadsCol, currentDocId), {
       name: file.name, thumb: url,
-      uploadedAt: now, expiresAt: now + EXPIRE_MS
+      uploadedAt: now, expiresAt: now + EXPIRE_MS,
+      extractedText: ''
     }).then(() => setSyncStatus('ok')).catch(() => setSyncStatus('err'));
   };
   reader.readAsDataURL(file);
@@ -325,7 +343,10 @@ function fmt(ts) {
 }
 function fmtExp(exp) {
   const diff = exp - Date.now(); if (diff <= 0) return '만료됨';
-  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
+  const d = Math.floor(diff/86400000);
+  const h = Math.floor((diff%86400000)/3600000);
+  if (d > 0) return `${d}일 ${h}시간 후 자동 삭제`;
+  const m = Math.floor((diff%3600000)/60000);
   return h > 0 ? `${h}시간 ${m}분 후 자동 삭제` : `${m}분 후 자동 삭제`;
 }
 function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
@@ -336,14 +357,19 @@ function renderHistory(uploads) {
   if (!uploads.length) { list.innerHTML = '<p id="hist-empty">아직 업로드된 사진이 없어요</p>'; return; }
   list.innerHTML = uploads.map(u => {
     const expired = u.expiresAt < now;
+    const hasText = u.extractedText && u.extractedText.trim().length > 0;
     return `<div class="hi">
       ${expired || !u.thumb
         ? `<div class="hi-exp-thumb"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>`
         : `<img class="hi-thumb" src="${u.thumb}" alt="${esc(u.name)}" />`}
-      <div class="hi-info">
-        <div class="hi-name">${esc(u.name)}</div>
+      <div class="hi-info" style="min-width:0;flex:1;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+          <div class="hi-name">${esc(u.name)}</div>
+          ${hasText ? `<button class="text-toggle-btn" onclick="toggleText('txt-${u.id}', this)">텍스트 ▼</button>` : ''}
+        </div>
         <div class="hi-time">${fmt(u.uploadedAt)}</div>
         <div class="hi-expire">${expired ? '<span class="exp-badge">만료 — 사진 삭제됨</span>' : fmtExp(u.expiresAt)}</div>
+        ${hasText ? `<div id="txt-${u.id}" class="hi-text" style="display:none;">${esc(u.extractedText)}</div>` : ''}
       </div>
       <button class="del-btn" onclick="deleteEntry('${u.id}')">삭제</button>
     </div>`;
@@ -388,6 +414,11 @@ xBtn.addEventListener('click', async () => {
       charCount.textContent = `${text.replace(/\s/g,'').length}자 (공백 제외)`;
       resSec.style.display = 'block';
       xBtn.disabled = false; xBtn.textContent = '다시 추출';
+      if (currentDocId) {
+        import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+          .then(m => m.updateDoc(doc(uploadsCol, currentDocId), { extractedText: text }))
+          .catch(() => {});
+      }
     }, 300);
   } catch(e) {
     progWrap.style.display = 'none'; progFill.style.width = '0%'; statusMsg.textContent = '';
@@ -462,6 +493,14 @@ function applyImport() {
     }, 1000);
   }, 1200);
 }
+
+window.toggleText = function(id, btn) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const open = el.style.display === 'none';
+  el.style.display = open ? 'block' : 'none';
+  btn.textContent = open ? '텍스트 ▲' : '텍스트 ▼';
+};
 
 function showErr(msg) { errBox.textContent = msg; errBox.style.display = 'block'; }
 function hideErr() { errBox.style.display = 'none'; }
