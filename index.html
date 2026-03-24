@@ -11,13 +11,11 @@
       --bg:          #FAF8F3;
       --bg-2:        #F2EEE6;
       --surface:     #EDE9DF;
-      --surface-2:   #E6E1D6;
       --hist-bg:     rgba(208,200,182,0.82);
       --border:      rgba(42,32,22,0.10);
       --border-md:   rgba(42,32,22,0.20);
       --border-hi:   rgba(42,32,22,0.40);
       --text:        #2A2016;
-      --text-2:      #4A3C2C;
       --text-3:      #7A6E58;
       --thumb:       #8A7E68;
       --btn-bg:      #2A2016;
@@ -27,15 +25,15 @@
       --danger-tx:   #903020;
       --expire-bg:   rgba(122,110,88,0.15);
       --expire-tx:   #7A6E58;
-      --font-serif:  Georgia, 'Times New Roman', serif;
-      --font-sans:   'Helvetica Neue', Helvetica, Arial, sans-serif;
-      --font-mono:   'Menlo', 'Consolas', monospace;
-      --radius:      10px;
-      --radius-sm:   4px;
+      --fs:          'Helvetica Neue', Helvetica, Arial, sans-serif;
+      --ff:          Georgia, 'Times New Roman', serif;
+      --fm:          'Menlo', 'Consolas', monospace;
+      --r:           10px;
+      --rs:          4px;
     }
 
     body {
-      font-family: var(--font-sans);
+      font-family: var(--fs);
       background-color: var(--bg);
       background-image: radial-gradient(circle, #CCC4B0 1px, transparent 1px);
       background-size: 18px 18px;
@@ -44,541 +42,403 @@
       padding: 2.5rem 1rem 5rem;
     }
 
-    .container { max-width: 640px; margin: 0 auto; }
+    .wrap { max-width: 640px; margin: 0 auto; }
 
-    header { margin-bottom: 2rem; }
-    .logo {
-      font-size: 18px; font-weight: 700; letter-spacing: 0.04em;
-      color: var(--text); font-family: var(--font-serif);
-    }
-    .tagline {
-      font-size: 12px; color: var(--text-3); margin-top: 4px;
-      font-family: var(--font-sans);
-    }
-
-    #sync-status {
-      display: inline-flex; align-items: center; gap: 5px;
-      font-size: 10px; color: var(--text-3); margin-top: 6px;
-      font-family: var(--font-sans);
-    }
-    #sync-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: #B0A890; flex-shrink: 0;
-    }
+    header { margin-bottom: 1.25rem; }
+    .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.04em; color: var(--text); font-family: var(--ff); }
+    .logo-sub { font-weight: 400; font-family: var(--fs); font-size: 13px; color: var(--text-3); letter-spacing: 0; }
+    .tagline { font-size: 12px; color: var(--text-3); margin-top: 4px; }
+    #sync-status { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-3); margin-top: 5px; }
+    #sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #B0A890; flex-shrink: 0; transition: background 0.3s; }
     #sync-dot.ok  { background: #7A9A6A; }
     #sync-dot.err { background: #903020; }
 
-    #device-id-wrap {
-      margin-top: 6px; font-size: 10px; color: var(--text-3);
-      font-family: var(--font-mono);
+    /* ID 패널 */
+    .id-panel {
+      margin-bottom: 1.5rem;
+      background: rgba(240,235,224,0.88);
+      border: 1px solid var(--border-md);
+      border-radius: var(--rs);
+      padding: 12px 14px;
     }
+    .id-panel-title { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 8px; }
+    .id-row { display: flex; align-items: center; gap: 6px; margin-bottom: 8px; }
+    .id-display { flex: 1; font-size: 11px; font-family: var(--fm); color: var(--text); background: rgba(42,32,22,0.06); border: 1px solid var(--border); border-radius: var(--rs); padding: 6px 8px; word-break: break-all; line-height: 1.5; }
+    .id-hint { font-size: 10px; color: var(--text-3); margin-bottom: 6px; }
+    .id-import-row { display: flex; align-items: center; gap: 6px; }
+    .id-input { flex: 1; font-size: 11px; font-family: var(--fm); color: var(--text); background: rgba(42,32,22,0.04); border: 1px solid var(--border-md); border-radius: var(--rs); padding: 6px 8px; outline: none; }
+    .sm-btn { flex-shrink: 0; font-size: 11px; padding: 6px 10px; border: 1px solid var(--border-md); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); white-space: nowrap; transition: background 0.1s; }
+    .sm-btn:hover { background: var(--bg-2); }
+    #import-msg { font-size: 10px; color: var(--text-3); margin-top: 5px; display: none; }
 
+    /* 드롭존 */
     #drop-zone {
       border: 1.5px dashed rgba(42,32,22,0.28);
-      border-radius: var(--radius);
+      border-radius: var(--r);
       padding: 2.5rem 1.5rem;
       text-align: center; cursor: pointer;
       background: rgba(240,235,224,0.88);
       transition: border-color 0.15s, background 0.15s;
+      user-select: none;
     }
-    #drop-zone:hover, #drop-zone.drag-over {
-      border-color: var(--border-hi);
-      background: rgba(232,226,212,0.95);
-    }
-    #drop-zone.has-image {
-      padding: 0; border-style: solid;
-      border-color: var(--border); cursor: default;
-      background: var(--surface);
-    }
+    #drop-zone:hover, #drop-zone.over { border-color: var(--border-hi); background: rgba(232,226,212,0.95); }
+    #drop-zone.filled { padding: 0; border-style: solid; border-color: var(--border); cursor: default; background: var(--surface); }
     #file-input { display: none; }
-    #preview-img {
-      width: 100%; max-height: 360px; object-fit: contain;
-      border-radius: calc(var(--radius) - 1px); display: block;
-    }
+    #preview-img { width: 100%; max-height: 360px; object-fit: contain; border-radius: calc(var(--r) - 1px); display: block; }
 
-    .upload-icon {
-      width: 42px; height: 42px; margin: 0 auto 14px;
-      background: rgba(42,32,22,0.10);
-      border: 1px solid rgba(42,32,22,0.18);
-      border-radius: var(--radius-sm);
-      display: flex; align-items: center; justify-content: center;
-    }
-    .upload-icon svg { width: 18px; height: 18px; stroke: var(--text); fill: none; }
-    .upload-hint { font-size: 14px; color: var(--text); font-family: var(--font-serif); }
-    .upload-hint strong { font-weight: 700; }
-    .upload-formats { font-size: 11px; color: var(--text-3); margin-top: 6px; letter-spacing: 0.06em; }
+    .up-icon { width: 42px; height: 42px; margin: 0 auto 14px; background: rgba(42,32,22,0.10); border: 1px solid rgba(42,32,22,0.18); border-radius: var(--rs); display: flex; align-items: center; justify-content: center; }
+    .up-icon svg { width: 18px; height: 18px; stroke: var(--text); fill: none; }
+    .up-hint { font-size: 14px; color: var(--text); font-family: var(--ff); }
+    .up-hint strong { font-weight: 700; }
+    .up-fmt { font-size: 11px; color: var(--text-3); margin-top: 6px; letter-spacing: 0.06em; }
 
+    /* 버튼 */
     #controls { margin-top: 10px; display: flex; gap: 8px; }
-    #extract-btn {
-      flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700;
-      background: var(--btn-bg); color: var(--btn-text);
-      border: none; border-radius: var(--radius-sm);
-      cursor: pointer; display: none; font-family: var(--font-serif);
-      letter-spacing: 0.06em; text-transform: uppercase;
-      transition: opacity 0.15s;
-    }
+    #extract-btn { flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--rs); cursor: pointer; display: none; font-family: var(--ff); letter-spacing: 0.06em; text-transform: uppercase; transition: opacity 0.15s; }
     #extract-btn:hover { opacity: 0.85; }
     #extract-btn:disabled { opacity: 0.35; cursor: not-allowed; }
-    #reset-btn {
-      padding: 11px 14px; font-size: 12px;
-      background: transparent;
-      border: 1px solid var(--border-md);
-      border-radius: var(--radius-sm);
-      cursor: pointer; color: var(--text-3);
-      display: none; font-family: var(--font-sans);
-      transition: background 0.1s, color 0.1s;
-    }
-    #reset-btn:hover { background: var(--bg-2); color: var(--text); }
+    #reset-btn { padding: 11px 14px; font-size: 12px; background: transparent; border: 1px solid var(--border-md); border-radius: var(--rs); cursor: pointer; color: var(--text-3); display: none; font-family: var(--fs); transition: background 0.1s; }
+    #reset-btn:hover { background: var(--bg-2); }
 
-    #progress-wrap { margin-top: 12px; display: none; }
-    #progress-bar {
-      height: 2px; background: rgba(42,32,22,0.12);
-      border-radius: 99px; overflow: hidden;
-    }
-    #progress-fill {
-      height: 100%; background: var(--btn-bg);
-      border-radius: 99px; width: 0%;
-      transition: width 0.4s ease;
-    }
+    /* 진행 */
+    #prog-wrap { margin-top: 12px; display: none; }
+    #prog-bar { height: 2px; background: rgba(42,32,22,0.12); border-radius: 99px; overflow: hidden; }
+    #prog-fill { height: 100%; background: var(--btn-bg); border-radius: 99px; width: 0%; transition: width 0.4s ease; }
     #status-msg { font-size: 11px; color: var(--text-3); margin-top: 6px; text-align: center; }
 
-    #error-box {
-      margin-top: 10px; padding: 10px 14px; display: none;
-      background: var(--danger-bg); border: 1px solid var(--danger-bd);
-      border-radius: var(--radius-sm); font-size: 13px; color: var(--danger-tx);
-    }
+    /* 에러 */
+    #error-box { margin-top: 10px; padding: 10px 14px; display: none; background: var(--danger-bg); border: 1px solid var(--danger-bd); border-radius: var(--rs); font-size: 13px; color: var(--danger-tx); }
 
-    #result-section { margin-top: 1.5rem; display: none; }
-    .result-header {
-      display: flex; align-items: center; justify-content: space-between;
-      margin-bottom: 8px;
-    }
-    .result-label {
-      font-size: 10px; font-weight: 500; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      font-family: var(--font-sans);
-    }
-    #copy-btn {
-      font-size: 11px; padding: 4px 10px;
-      border: 1px solid var(--border-md); border-radius: var(--radius-sm);
-      background: transparent; cursor: pointer;
-      color: var(--text-3); font-family: var(--font-sans);
-      transition: background 0.1s, color 0.1s;
-    }
-    #copy-btn:hover { background: var(--bg-2); color: var(--text); }
-    #result-box {
-      background: rgba(240,235,224,0.88);
-      border: 1px solid var(--border);
-      border-radius: var(--radius-sm); padding: 1rem 1.25rem;
-      font-size: 14px; line-height: 1.8; color: var(--text);
-      white-space: pre-wrap; word-break: break-word; min-height: 80px;
-      font-family: var(--font-sans);
-    }
-    #char-count {
-      font-size: 10px; color: var(--text-3); margin-top: 6px;
-      text-align: right; font-family: var(--font-sans);
-    }
+    /* 결과 */
+    #result-sec { margin-top: 1.5rem; display: none; }
+    .res-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+    .res-lbl { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; }
+    #copy-btn { font-size: 11px; padding: 4px 10px; border: 1px solid var(--border-md); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); transition: background 0.1s; }
+    #copy-btn:hover { background: var(--bg-2); }
+    #result-box { background: rgba(240,235,224,0.88); border: 1px solid var(--border); border-radius: var(--rs); padding: 1rem 1.25rem; font-size: 14px; line-height: 1.8; color: var(--text); white-space: pre-wrap; word-break: break-word; min-height: 80px; font-family: var(--fs); }
+    #char-count { font-size: 10px; color: var(--text-3); margin-top: 6px; text-align: right; }
 
     .divider { height: 1px; background: rgba(42,32,22,0.12); margin: 2rem 0; }
 
-    .section-title {
-      font-size: 10px; font-weight: 500; color: var(--text-3);
-      text-transform: uppercase; letter-spacing: 0.08em;
-      margin-bottom: 10px; font-family: var(--font-sans);
-    }
-    #history-list { display: flex; flex-direction: column; gap: 6px; }
-    #history-empty {
-      font-size: 13px; color: var(--text-3); text-align: center; padding: 1.5rem;
-      border: 1px dashed var(--border-md); border-radius: var(--radius-sm);
-      font-family: var(--font-sans);
-    }
+    /* 기록 */
+    .sec-title { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+    #hist-list { display: flex; flex-direction: column; gap: 6px; }
+    #hist-empty { font-size: 13px; color: var(--text-3); text-align: center; padding: 1.5rem; border: 1px dashed var(--border-md); border-radius: var(--rs); }
 
-    .history-item {
-      display: flex; align-items: center; gap: 12px;
-      padding: 10px 14px;
-      background: var(--hist-bg);
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      transition: border-color 0.1s;
-    }
-    .history-item:hover { border-color: var(--border-md); }
-    .history-thumb {
-      width: 44px; height: 44px; border-radius: 3px; object-fit: cover;
-      flex-shrink: 0; border: 1px solid var(--border);
-    }
-    .thumb-expired {
-      width: 44px; height: 44px; border-radius: 3px;
-      background: var(--thumb); border: 1px solid var(--border);
-      flex-shrink: 0; display: flex; align-items: center; justify-content: center;
-    }
-    .thumb-expired svg { width: 16px; height: 16px; stroke: var(--bg); fill: none; }
-    .history-info { flex: 1; min-width: 0; }
-    .history-name {
-      font-size: 13px; font-weight: 500; color: var(--text);
-      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-      font-family: var(--font-sans);
-    }
-    .history-time {
-      font-size: 11px; color: var(--text-3); margin-top: 2px;
-      font-variant-numeric: tabular-nums; font-family: var(--font-sans);
-    }
-    .history-expire { font-size: 10px; color: var(--text-3); margin-top: 2px; font-family: var(--font-sans); }
-    .expire-badge {
-      display: inline-block; font-size: 9px; padding: 1px 7px; border-radius: 99px;
-      background: var(--expire-bg); color: var(--expire-tx); font-weight: 500;
-    }
-    .del-btn {
-      font-size: 11px; padding: 3px 8px;
-      border: 1px solid var(--border); border-radius: var(--radius-sm);
-      background: transparent; cursor: pointer; color: var(--text-3);
-      flex-shrink: 0; font-family: var(--font-sans);
-      transition: color 0.1s, border-color 0.1s;
-    }
+    .hi { display: flex; align-items: center; gap: 12px; padding: 10px 14px; background: var(--hist-bg); border: 1px solid var(--border); border-radius: var(--rs); transition: border-color 0.1s; }
+    .hi:hover { border-color: var(--border-md); }
+    .hi-thumb { width: 44px; height: 44px; border-radius: 3px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); }
+    .hi-exp-thumb { width: 44px; height: 44px; border-radius: 3px; background: var(--thumb); border: 1px solid var(--border); flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .hi-exp-thumb svg { width: 16px; height: 16px; stroke: var(--bg); fill: none; }
+    .hi-info { flex: 1; min-width: 0; }
+    .hi-name { font-size: 13px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .hi-time { font-size: 11px; color: var(--text-3); margin-top: 2px; font-variant-numeric: tabular-nums; }
+    .hi-expire { font-size: 10px; color: var(--text-3); margin-top: 2px; }
+    .exp-badge { display: inline-block; font-size: 9px; padding: 1px 7px; border-radius: 99px; background: var(--expire-bg); color: var(--expire-tx); font-weight: 500; }
+    .del-btn { font-size: 11px; padding: 3px 8px; border: 1px solid var(--border); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); flex-shrink: 0; font-family: var(--fs); transition: color 0.1s, border-color 0.1s; }
     .del-btn:hover { color: var(--danger-tx); border-color: var(--danger-bd); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div class="logo">booktotext <span style="font-weight:400;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;color:#7A6E58;letter-spacing:0;">by nainn</span></div>
-      <div class="tagline">사진 속 텍스트를 추출해요 — Claude Vision 기반</div>
-      <div id="sync-status"><span id="sync-dot"></span><span id="sync-label">연결 중...</span></div>
-    </header>
+<div class="wrap">
+  <header>
+    <div class="logo">booktotext <span class="logo-sub">by nainn</span></div>
+    <div class="tagline">사진 속 텍스트를 추출해요 — Claude Vision 기반</div>
+    <div id="sync-status"><span id="sync-dot"></span><span id="sync-label">연결 중...</span></div>
+  </header>
 
-    <div id="id-panel" style="margin-bottom:1.5rem;background:rgba(240,235,224,0.88);border:1px solid rgba(42,32,22,0.12);border-radius:6px;padding:12px 14px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
-      <div style="font-size:10px;font-weight:500;color:#7A6E58;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">기기 ID 동기화</div>
-      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-        <div id="device-id-display" style="flex:1;font-size:11px;font-family:'Menlo','Consolas',monospace;color:#2A2016;background:rgba(42,32,22,0.06);border:1px solid rgba(42,32,22,0.12);border-radius:4px;padding:6px 8px;word-break:break-all;line-height:1.5;"></div>
-        <button onclick="copyDeviceId()" id="copy-id-btn" style="flex-shrink:0;font-size:11px;padding:6px 10px;border:1px solid rgba(42,32,22,0.20);border-radius:4px;background:transparent;cursor:pointer;color:#7A6E58;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;white-space:nowrap;">복사</button>
-      </div>
-      <div style="font-size:10px;color:#7A6E58;margin-bottom:6px;">다른 기기의 ID를 붙여넣으면 같은 기록을 공유해요</div>
-      <div style="display:flex;align-items:center;gap:6px;">
-        <input id="import-id-input" type="text" placeholder="다른 기기 ID 붙여넣기..." style="flex:1;font-size:11px;font-family:'Menlo','Consolas',monospace;color:#2A2016;background:rgba(42,32,22,0.04);border:1px solid rgba(42,32,22,0.15);border-radius:4px;padding:6px 8px;outline:none;" />
-        <button onclick="importDeviceId()" style="flex-shrink:0;font-size:11px;padding:6px 10px;border:1px solid rgba(42,32,22,0.20);border-radius:4px;background:transparent;cursor:pointer;color:#7A6E58;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;white-space:nowrap;">적용</button>
-      </div>
-      <div id="import-msg" style="font-size:10px;color:#7A6E58;margin-top:5px;display:none;"></div>
+  <!-- 기기 ID 패널 -->
+  <div class="id-panel">
+    <div class="id-panel-title">기기 ID 동기화</div>
+    <div class="id-row">
+      <div class="id-display" id="id-display"></div>
+      <button class="sm-btn" id="copy-id-btn">복사</button>
     </div>
-
-    <div id="drop-zone" onclick="onDropZoneClick()">
-      <div id="upload-placeholder">
-        <div class="upload-icon">
-          <svg viewBox="0 0 24 24" stroke-width="1.5">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
-          </svg>
-        </div>
-        <p class="upload-hint"><strong>클릭하거나 드래그</strong>해서 사진 업로드</p>
-        <p class="upload-formats">JPG · PNG · WEBP · GIF · BMP</p>
-      </div>
-      <img id="preview-img" style="display:none;" alt="preview" />
+    <div class="id-hint">다른 기기의 ID를 붙여넣으면 같은 기록을 공유해요</div>
+    <div class="id-import-row">
+      <input class="id-input" id="import-input" type="text" placeholder="다른 기기 ID 붙여넣기..." />
+      <button class="sm-btn" id="import-btn">적용</button>
     </div>
-    <input type="file" id="file-input" accept="image/*" />
-
-    <div id="controls">
-      <button id="extract-btn" onclick="extractText()">텍스트 추출하기</button>
-      <button id="reset-btn" onclick="resetUpload()">다시 선택</button>
-    </div>
-
-    <div id="progress-wrap">
-      <div id="progress-bar"><div id="progress-fill"></div></div>
-      <p id="status-msg"></p>
-    </div>
-    <div id="error-box"></div>
-
-    <div id="result-section">
-      <div class="result-header">
-        <span class="result-label">추출된 텍스트</span>
-        <button id="copy-btn" onclick="copyText()">복사</button>
-      </div>
-      <div id="result-box"></div>
-      <p id="char-count"></p>
-    </div>
-
-    <div class="divider"></div>
-
-    <div id="history-section">
-      <p class="section-title">업로드 기록</p>
-      <div id="history-list">
-        <p id="history-empty">아직 업로드된 사진이 없어요</p>
-      </div>
-    </div>
+    <div id="import-msg"></div>
   </div>
 
-  <!-- Firebase SDK -->
-  <script type="module">
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
-    import {
-      getFirestore, collection, doc, setDoc, deleteDoc,
-      onSnapshot, query, orderBy, Timestamp
-    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+  <!-- 드롭존 -->
+  <div id="drop-zone">
+    <div id="up-ph">
+      <div class="up-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/>
+        </svg>
+      </div>
+      <p class="up-hint"><strong>클릭하거나 드래그</strong>해서 사진 업로드</p>
+      <p class="up-fmt">JPG · PNG · WEBP · GIF · BMP</p>
+    </div>
+    <img id="preview-img" style="display:none;" alt="preview" />
+  </div>
+  <input type="file" id="file-input" accept="image/*" />
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyCTrYhpRHc7ZYNWQAdIYgLlPiYCgKoXSVs",
-      authDomain: "booktotext-nainn.firebaseapp.com",
-      projectId: "booktotext-nainn",
-      storageBucket: "booktotext-nainn.firebasestorage.app",
-      messagingSenderId: "1068733097590",
-      appId: "1:1068733097590:web:d8a6171af60c0d95b6a157"
-    };
+  <div id="controls">
+    <button id="extract-btn">텍스트 추출하기</button>
+    <button id="reset-btn">다시 선택</button>
+  </div>
 
-    const app = initializeApp(firebaseConfig);
-    const db  = getFirestore(app);
+  <div id="prog-wrap"><div id="prog-bar"><div id="prog-fill"></div></div><p id="status-msg"></p></div>
+  <div id="error-box"></div>
 
-    const EXPIRE_MS = 24 * 60 * 60 * 1000;
-    let imageBase64 = null;
-    let imageMediaType = null;
+  <div id="result-sec">
+    <div class="res-hd"><span class="res-lbl">추출된 텍스트</span><button id="copy-btn">복사</button></div>
+    <div id="result-box"></div>
+    <p id="char-count"></p>
+  </div>
 
-    /* ── 기기 ID ── */
-    function getDeviceId() {
-      let id = localStorage.getItem('btt_device_id');
-      if (!id) {
-        id = crypto.randomUUID();
-        localStorage.setItem('btt_device_id', id);
-      }
-      return id;
-    }
-    const DEVICE_ID = getDeviceId();
-    const uploadsCol = collection(db, 'users', DEVICE_ID, 'uploads');
+  <div class="divider"></div>
 
-    document.getElementById('device-id-display').textContent = DEVICE_ID;
+  <p class="sec-title">업로드 기록</p>
+  <div id="hist-list"><p id="hist-empty">아직 업로드된 사진이 없어요</p></div>
+</div>
 
-    /* ── 동기화 상태 ── */
-    const syncDot   = document.getElementById('sync-dot');
-    const syncLabel = document.getElementById('sync-label');
-    function setSyncStatus(state) {
-      syncDot.className = '';
-      if (state === 'ok')  { syncDot.classList.add('ok');  syncLabel.textContent = '동기화됨'; }
-      if (state === 'err') { syncDot.classList.add('err'); syncLabel.textContent = '연결 오류'; }
-      if (state === 'ing') { syncLabel.textContent = '동기화 중...'; }
-    }
+<script type="module">
+import { initializeApp }       from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDocs }
+  from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-    /* ── DOM refs ── */
-    const dropZone      = document.getElementById('drop-zone');
-    const fileInput     = document.getElementById('file-input');
-    const previewImg    = document.getElementById('preview-img');
-    const uploadPH      = document.getElementById('upload-placeholder');
-    const extractBtn    = document.getElementById('extract-btn');
-    const resetBtn      = document.getElementById('reset-btn');
-    const resultSection = document.getElementById('result-section');
-    const resultBox     = document.getElementById('result-box');
-    const charCount     = document.getElementById('char-count');
-    const progressWrap  = document.getElementById('progress-wrap');
-    const progressFill  = document.getElementById('progress-fill');
-    const statusMsg     = document.getElementById('status-msg');
-    const errorBox      = document.getElementById('error-box');
-    const copyBtn       = document.getElementById('copy-btn');
+/* ── Firebase 초기화 ── */
+const app = initializeApp({
+  apiKey:            "AIzaSyCTrYhpRHc7ZYNWQAdIYgLlPiYCgKoXSVs",
+  authDomain:        "booktotext-nainn.firebaseapp.com",
+  projectId:         "booktotext-nainn",
+  storageBucket:     "booktotext-nainn.firebasestorage.app",
+  messagingSenderId: "1068733097590",
+  appId:             "1:1068733097590:web:d8a6171af60c0d95b6a157"
+});
+const db = getFirestore(app);
 
-    /* ── Firestore 실시간 리스닝 ── */
-    const q = query(uploadsCol, orderBy('uploadedAt', 'desc'));
-    onSnapshot(q,
-      snapshot => {
-        setSyncStatus('ok');
-        const now = Date.now();
-        const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderHistory(docs.map(u => ({
-          ...u,
-          expired: u.expiresAt < now
-        })));
-      },
-      err => { console.error(err); setSyncStatus('err'); }
-    );
+/* ── 상수 / 상태 ── */
+const EXPIRE_MS = 24 * 60 * 60 * 1000;
+let b64 = null, mime = null;
 
-    /* ── 파일 처리 ── */
-    function onDropZoneClick() {
-      if (!dropZone.classList.contains('has-image')) fileInput.click();
-    }
-    window.onDropZoneClick = onDropZoneClick;
+/* ── 기기 ID ── */
+function getDeviceId() {
+  let id = localStorage.getItem('btt_device_id');
+  if (!id) { id = crypto.randomUUID(); localStorage.setItem('btt_device_id', id); }
+  return id;
+}
+let DEVICE_ID = getDeviceId();
+let uploadsCol = collection(db, 'users', DEVICE_ID, 'uploads');
 
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
-    dropZone.addEventListener('drop', e => {
-      e.preventDefault(); dropZone.classList.remove('drag-over');
-      if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+/* ── DOM ── */
+const dz         = document.getElementById('drop-zone');
+const fi         = document.getElementById('file-input');
+const pi         = document.getElementById('preview-img');
+const ph         = document.getElementById('up-ph');
+const xBtn       = document.getElementById('extract-btn');
+const rBtn       = document.getElementById('reset-btn');
+const resSec     = document.getElementById('result-sec');
+const resBox     = document.getElementById('result-box');
+const charCount  = document.getElementById('char-count');
+const progWrap   = document.getElementById('prog-wrap');
+const progFill   = document.getElementById('prog-fill');
+const statusMsg  = document.getElementById('status-msg');
+const errBox     = document.getElementById('error-box');
+const copyBtn    = document.getElementById('copy-btn');
+const syncDot    = document.getElementById('sync-dot');
+const syncLabel  = document.getElementById('sync-label');
+const idDisplay  = document.getElementById('id-display');
+const copyIdBtn  = document.getElementById('copy-id-btn');
+const importInput= document.getElementById('import-input');
+const importBtn  = document.getElementById('import-btn');
+const importMsg  = document.getElementById('import-msg');
+
+/* ── ID 패널 초기화 ── */
+idDisplay.textContent = DEVICE_ID;
+
+/* ── 동기화 상태 ── */
+function setSyncStatus(s) {
+  syncDot.className = s === 'ok' ? 'ok' : s === 'err' ? 'err' : '';
+  syncLabel.textContent = s === 'ok' ? '동기화됨' : s === 'err' ? '연결 오류' : '동기화 중...';
+}
+
+/* ── Firestore 실시간 리스닝 ── */
+let unsubscribe = null;
+function startListening() {
+  if (unsubscribe) unsubscribe();
+  uploadsCol = collection(db, 'users', DEVICE_ID, 'uploads');
+  const q = query(uploadsCol, orderBy('uploadedAt', 'desc'));
+  unsubscribe = onSnapshot(q,
+    snap => { setSyncStatus('ok'); renderHistory(snap.docs.map(d => ({ id: d.id, ...d.data() }))); },
+    ()   => setSyncStatus('err')
+  );
+}
+startListening();
+
+/* ── 드롭존 이벤트 ── */
+dz.addEventListener('click', () => { if (!dz.classList.contains('filled')) fi.click(); });
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
+dz.addEventListener('dragleave', ()=> dz.classList.remove('over'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('over');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+fi.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+
+/* ── 파일 처리 ── */
+function handleFile(file) {
+  if (!file.type.startsWith('image/')) { showErr('이미지 파일만 업로드할 수 있어요.'); return; }
+  hideErr();
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const url = ev.target.result;
+    b64 = url.split(',')[1]; mime = file.type;
+    pi.src = url; pi.style.display = 'block';
+    ph.style.display = 'none';
+    dz.classList.add('filled');
+    xBtn.style.display = 'flex'; rBtn.style.display = 'flex';
+    resSec.style.display = 'none';
+
+    const now = Date.now();
+    setSyncStatus('ing');
+    setDoc(doc(uploadsCol, String(now)), {
+      name: file.name, thumb: url,
+      uploadedAt: now, expiresAt: now + EXPIRE_MS
+    }).then(() => setSyncStatus('ok')).catch(() => setSyncStatus('err'));
+  };
+  reader.readAsDataURL(file);
+}
+
+/* ── 삭제 ── */
+window.deleteEntry = async id => {
+  setSyncStatus('ing');
+  try { await deleteDoc(doc(uploadsCol, String(id))); setSyncStatus('ok'); }
+  catch { setSyncStatus('err'); }
+};
+
+/* ── 렌더 ── */
+function fmt(ts) {
+  const d = new Date(ts), p = n => String(n).padStart(2,'0');
+  return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+}
+function fmtExp(exp) {
+  const diff = exp - Date.now(); if (diff <= 0) return '만료됨';
+  const h = Math.floor(diff/3600000), m = Math.floor((diff%3600000)/60000);
+  return h > 0 ? `${h}시간 ${m}분 후 자동 삭제` : `${m}분 후 자동 삭제`;
+}
+function esc(s) { return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+function renderHistory(uploads) {
+  const list = document.getElementById('hist-list');
+  const now = Date.now();
+  if (!uploads.length) { list.innerHTML = '<p id="hist-empty">아직 업로드된 사진이 없어요</p>'; return; }
+  list.innerHTML = uploads.map(u => {
+    const expired = u.expiresAt < now;
+    return `<div class="hi">
+      ${expired || !u.thumb
+        ? `<div class="hi-exp-thumb"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>`
+        : `<img class="hi-thumb" src="${u.thumb}" alt="${esc(u.name)}" />`}
+      <div class="hi-info">
+        <div class="hi-name">${esc(u.name)}</div>
+        <div class="hi-time">${fmt(u.uploadedAt)}</div>
+        <div class="hi-expire">${expired ? '<span class="exp-badge">만료 — 사진 삭제됨</span>' : fmtExp(u.expiresAt)}</div>
+      </div>
+      <button class="del-btn" onclick="deleteEntry('${u.id}')">삭제</button>
+    </div>`;
+  }).join('');
+}
+
+/* ── 만료 항목 정리 (1시간마다) ── */
+setInterval(async () => {
+  const now = Date.now();
+  const snap = await getDocs(uploadsCol);
+  snap.forEach(d => { if (d.data().expiresAt < now) deleteDoc(doc(uploadsCol, d.id)); });
+}, 3600000);
+
+/* ── OCR 추출 ── */
+xBtn.addEventListener('click', async () => {
+  if (!b64) return;
+  xBtn.disabled = true; xBtn.textContent = '분석 중...';
+  resSec.style.display = 'none';
+  progWrap.style.display = 'block'; progFill.style.width = '30%';
+  statusMsg.textContent = '이미지를 분석하고 있어요...'; hideErr();
+  try {
+    progFill.style.width = '60%';
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514', max_tokens: 1000,
+        messages: [{ role: 'user', content: [
+          { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } },
+          { type: 'text', text: '이 이미지에 있는 텍스트를 그대로 추출해줘. 반드시 다음 규칙을 따라:\n1. 이미지에 실제로 보이는 글자만 출력해. 절대로 문맥을 보완하거나 추측해서 바꾸지 마.\n2. 손글씨처럼 알아보기 어려운 글자가 있으면 [?] 로 표시해. 억지로 읽으려고 하지 마.\n3. 글자가 번진 부분, 겹친 부분, 확실히 판독되지 않는 부분도 [?] 로 남겨.\n4. 설명, 요약, 부연 없이 텍스트만 출력해.\n5. 텍스트가 없으면 [텍스트 없음] 이라고만 출력해.' }
+        ]}]
+      })
     });
-    fileInput.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+    progFill.style.width = '90%';
+    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API 오류 (${res.status})`); }
+    const data = await res.json();
+    const text = data.content?.map(b => b.text||'').join('') || '';
+    progFill.style.width = '100%'; statusMsg.textContent = '';
+    setTimeout(() => {
+      progWrap.style.display = 'none'; progFill.style.width = '0%';
+      resBox.textContent = text;
+      charCount.textContent = `${text.replace(/\s/g,'').length}자 (공백 제외)`;
+      resSec.style.display = 'block';
+      xBtn.disabled = false; xBtn.textContent = '다시 추출';
+    }, 300);
+  } catch(e) {
+    progWrap.style.display = 'none'; progFill.style.width = '0%'; statusMsg.textContent = '';
+    showErr('추출 실패: ' + e.message);
+    xBtn.disabled = false; xBtn.textContent = '텍스트 추출하기';
+  }
+});
 
-    function handleFile(file) {
-      if (!file.type.startsWith('image/')) { showError('이미지 파일만 업로드할 수 있어요.'); return; }
-      hideError();
-      const reader = new FileReader();
-      reader.onload = ev => {
-        const dataUrl = ev.target.result;
-        imageBase64 = dataUrl.split(',')[1];
-        imageMediaType = file.type;
-        previewImg.src = dataUrl;
-        previewImg.style.display = 'block';
-        uploadPH.style.display = 'none';
-        dropZone.classList.add('has-image');
-        extractBtn.style.display = 'flex';
-        resetBtn.style.display = 'flex';
-        resultSection.style.display = 'none';
+/* ── 리셋 ── */
+rBtn.addEventListener('click', () => {
+  b64 = null; mime = null;
+  pi.src = ''; pi.style.display = 'none'; ph.style.display = 'block';
+  dz.classList.remove('filled');
+  xBtn.style.display = 'none'; rBtn.style.display = 'none';
+  resSec.style.display = 'none';
+  progWrap.style.display = 'none'; statusMsg.textContent = '';
+  fi.value = ''; hideErr();
+});
 
-        /* Firestore에 업로드 기록 저장 (썸네일 포함) */
-        const now  = Date.now();
-        const docId = String(now);
-        setSyncStatus('ing');
-        setDoc(doc(uploadsCol, docId), {
-          name:       file.name,
-          thumb:      dataUrl,
-          uploadedAt: now,
-          expiresAt:  now + EXPIRE_MS,
-          deviceId:   DEVICE_ID
-        }).then(() => setSyncStatus('ok')).catch(() => setSyncStatus('err'));
-      };
-      reader.readAsDataURL(file);
-    }
+/* ── 복사 ── */
+copyBtn.addEventListener('click', () => {
+  const text = resBox.textContent; if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
+  }).catch(() => {
+    const s = window.getSelection(), r = document.createRange();
+    r.selectNodeContents(resBox); s.removeAllRanges(); s.addRange(r);
+    document.execCommand('copy');
+    copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
+  });
+});
 
-    /* ── 삭제 ── */
-    window.deleteEntry = async function(id) {
-      setSyncStatus('ing');
-      try {
-        await deleteDoc(doc(uploadsCol, String(id)));
-        setSyncStatus('ok');
-      } catch { setSyncStatus('err'); }
-    };
+/* ── ID 복사 ── */
+copyIdBtn.addEventListener('click', () => {
+  navigator.clipboard.writeText(DEVICE_ID).then(() => {
+    copyIdBtn.textContent = '복사됨'; setTimeout(() => copyIdBtn.textContent = '복사', 1500);
+  });
+});
 
-    /* ── 렌더링 ── */
-    function formatTime(ts) {
-      const d = new Date(ts);
-      const p = n => String(n).padStart(2, '0');
-      return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-    }
-    function formatExpire(expiresAt) {
-      const diff = expiresAt - Date.now();
-      if (diff <= 0) return '만료됨';
-      const h = Math.floor(diff / 3600000);
-      const m = Math.floor((diff % 3600000) / 60000);
-      return h > 0 ? `${h}시간 ${m}분 후 자동 삭제` : `${m}분 후 자동 삭제`;
-    }
-    function escHtml(s) {
-      return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-    }
+/* ── ID 가져오기 ── */
+importBtn.addEventListener('click', applyImport);
+importInput.addEventListener('keydown', e => { if (e.key === 'Enter') applyImport(); });
 
-    function renderHistory(uploads) {
-      const list = document.getElementById('history-list');
-      if (!uploads.length) {
-        list.innerHTML = '<p id="history-empty">아직 업로드된 사진이 없어요</p>';
-        return;
-      }
-      list.innerHTML = uploads.map(u => `
-        <div class="history-item">
-          ${u.expired || !u.thumb
-            ? `<div class="thumb-expired"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>`
-            : `<img class="history-thumb" src="${u.thumb}" alt="${escHtml(u.name)}" />`}
-          <div class="history-info">
-            <div class="history-name">${escHtml(u.name)}</div>
-            <div class="history-time">${formatTime(u.uploadedAt)}</div>
-            <div class="history-expire">
-              ${u.expired ? '<span class="expire-badge">만료 — 사진 삭제됨</span>' : formatExpire(u.expiresAt)}
-            </div>
-          </div>
-          <button class="del-btn" onclick="deleteEntry('${u.id}')">삭제</button>
-        </div>
-      `).join('');
-    }
+function applyImport() {
+  const val = importInput.value.trim();
+  if (!val || val.length < 8) {
+    importMsg.style.display = 'block'; importMsg.style.color = '#903020';
+    importMsg.textContent = 'ID가 올바르지 않아요.'; return;
+  }
+  localStorage.setItem('btt_device_id', val);
+  importMsg.style.display = 'block'; importMsg.style.color = '#7A6E58';
+  importMsg.textContent = '적용됐어요. 페이지를 새로고침할게요.';
+  setTimeout(() => location.reload(), 800);
+}
 
-    /* ── 만료 항목 자동 삭제 (Firestore) ── */
-    setInterval(async () => {
-      const now = Date.now();
-      const snapshot = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
-        .then(m => m.getDocs(uploadsCol));
-      snapshot.forEach(d => {
-        if (d.data().expiresAt < now) deleteDoc(doc(uploadsCol, d.id));
-      });
-    }, 60 * 60 * 1000);
-
-    /* ── OCR 추출 ── */
-    window.extractText = async function() {
-      if (!imageBase64) return;
-      extractBtn.disabled = true; extractBtn.textContent = '분석 중...';
-      resultSection.style.display = 'none';
-      progressWrap.style.display = 'block'; progressFill.style.width = '30%';
-      statusMsg.textContent = '이미지를 분석하고 있어요...'; hideError();
-      try {
-        progressFill.style.width = '60%';
-        const response = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
-            max_tokens: 1000,
-            messages: [{ role: 'user', content: [
-              { type: 'image', source: { type: 'base64', media_type: imageMediaType, data: imageBase64 } },
-              { type: 'text', text: '이 이미지에 있는 텍스트를 그대로 추출해줘. 반드시 다음 규칙을 따라:\n1. 이미지에 실제로 보이는 글자만 출력해. 절대로 문맥을 보완하거나 추측해서 바꾸지 마.\n2. 손글씨처럼 알아보기 어려운 글자가 있으면 [?] 로 표시해. 억지로 읽으려고 하지 마.\n3. 글자가 번진 부분, 겹친 부분, 확실히 판독되지 않는 부분도 [?] 로 남겨.\n4. 설명, 요약, 부연 없이 텍스트만 출력해.\n5. 텍스트가 없으면 [텍스트 없음] 이라고만 출력해.' }
-            ]}]
-          })
-        });
-        progressFill.style.width = '90%';
-        if (!response.ok) {
-          const err = await response.json().catch(() => ({}));
-          throw new Error(err.error?.message || `API 오류 (${response.status})`);
-        }
-        const data = await response.json();
-        const text = data.content?.map(b => b.text || '').join('') || '';
-        progressFill.style.width = '100%'; statusMsg.textContent = '';
-        setTimeout(() => {
-          progressWrap.style.display = 'none'; progressFill.style.width = '0%';
-          resultBox.textContent = text;
-          charCount.textContent = `${text.replace(/\s/g,'').length}자 (공백 제외)`;
-          resultSection.style.display = 'block';
-          extractBtn.disabled = false; extractBtn.textContent = '다시 추출';
-        }, 300);
-      } catch (err) {
-        progressWrap.style.display = 'none'; progressFill.style.width = '0%';
-        statusMsg.textContent = '';
-        showError('추출 실패: ' + err.message);
-        extractBtn.disabled = false; extractBtn.textContent = '텍스트 추출하기';
-      }
-    };
-
-    /* ── 리셋 ── */
-    window.resetUpload = function() {
-      imageBase64 = null; imageMediaType = null;
-      previewImg.src = ''; previewImg.style.display = 'none';
-      uploadPH.style.display = 'block';
-      dropZone.classList.remove('has-image');
-      extractBtn.style.display = 'none'; resetBtn.style.display = 'none';
-      resultSection.style.display = 'none';
-      progressWrap.style.display = 'none'; statusMsg.textContent = '';
-      fileInput.value = ''; hideError();
-    };
-
-    /* ── 복사 ── */
-    window.copyText = function() {
-      const text = resultBox.textContent;
-      if (!text) return;
-      navigator.clipboard.writeText(text).then(() => {
-        copyBtn.textContent = '복사됨';
-        setTimeout(() => copyBtn.textContent = '복사', 1500);
-      }).catch(() => {
-        const sel = window.getSelection(); const range = document.createRange();
-        range.selectNodeContents(resultBox); sel.removeAllRanges(); sel.addRange(range);
-        document.execCommand('copy');
-        copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
-      });
-    };
-
-    window.copyDeviceId = function() {
-      navigator.clipboard.writeText(DEVICE_ID).then(() => {
-        const btn = document.getElementById('copy-id-btn');
-        btn.textContent = '복사됨'; setTimeout(() => btn.textContent = '복사', 1500);
-      });
-    };
-
-    window.importDeviceId = function() {
-      const input = document.getElementById('import-id-input');
-      const msg   = document.getElementById('import-msg');
-      const val   = input.value.trim();
-      if (!val || val.length < 8) {
-        msg.style.display = 'block'; msg.style.color = '#903020';
-        msg.textContent = 'ID가 올바르지 않아요.'; return;
-      }
-      localStorage.setItem('btt_device_id', val);
-      msg.style.display = 'block'; msg.style.color = '#7A6E58';
-      msg.textContent = '적용됐어요. 페이지를 새로고침할게요.';
-      setTimeout(() => location.reload(), 800);
-    };
-
-    function showError(msg) { errorBox.textContent = msg; errorBox.style.display = 'block'; }
-    function hideError() { errorBox.style.display = 'none'; }
-  </script>
+function showErr(msg) { errBox.textContent = msg; errBox.style.display = 'block'; }
+function hideErr() { errBox.style.display = 'none'; }
+</script>
 </body>
 </html>
