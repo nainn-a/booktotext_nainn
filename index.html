@@ -109,7 +109,7 @@
     .up-fmt { font-size: 11px; color: var(--text-3); margin-top: 6px; letter-spacing: 0.06em; }
 
     #controls { margin-top: 10px; display: flex; gap: 8px; }
-    #extract-btn { flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--rs); cursor: pointer; display: none; font-family: var(--ff); letter-spacing: 0.06em; text-transform: uppercase; text-align: center; transition: opacity 0.15s; }
+    #extract-btn { flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--rs); cursor: pointer; display: none; font-family: var(--ff); letter-spacing: 0.06em; text-transform: uppercase; text-align: center; justify-content: center; align-items: center; transition: opacity 0.15s; }
     #extract-btn:hover { opacity: 0.85; }
     #extract-btn:disabled { opacity: 0.35; cursor: not-allowed; }
     #reset-btn { padding: 11px 14px; font-size: 12px; background: transparent; border: 1px solid var(--border-md); border-radius: var(--rs); cursor: pointer; color: var(--text-3); display: none; font-family: var(--fs); transition: background 0.1s; }
@@ -315,25 +315,41 @@ dz.addEventListener('drop', e => {
 fi.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
 
 /* ── 파일 처리 ── */
+function resizeThumb(url, maxSize = 120) {
+  return new Promise(resolve => {
+    const img = new Image();
+    img.onload = () => {
+      const ratio = Math.min(maxSize / img.width, maxSize / img.height, 1);
+      const canvas = document.createElement('canvas');
+      canvas.width = Math.round(img.width * ratio);
+      canvas.height = Math.round(img.height * ratio);
+      canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve(canvas.toDataURL('image/jpeg', 0.7));
+    };
+    img.src = url;
+  });
+}
+
 function handleFile(file) {
   if (!file.type.startsWith('image/')) { showErr('이미지 파일만 업로드할 수 있어요.'); return; }
   hideErr();
   const reader = new FileReader();
-  reader.onload = ev => {
+  reader.onload = async ev => {
     const url = ev.target.result;
     b64 = url.split(',')[1]; mime = file.type;
     pi.src = url; pi.style.display = 'block';
     ph.style.display = 'none'; dz.classList.add('filled');
-    xBtn.style.display = 'flex'; rBtn.style.display = 'flex';
+    xBtn.style.display = 'block'; rBtn.style.display = 'block';
     resSec.style.display = 'none';
     const now = Date.now();
     currentDocId = String(now);
+    const thumb = await resizeThumb(url);
     setSyncStatus('ing');
     setDoc(doc(uploadsCol, currentDocId), {
-      name: file.name, thumb: url,
+      name: file.name, thumb,
       uploadedAt: now, expiresAt: now + EXPIRE_MS,
       extractedText: ''
-    }).then(() => setSyncStatus('ok')).catch(() => setSyncStatus('err'));
+    }).then(() => setSyncStatus('ok')).catch(e => { console.error(e); setSyncStatus('err'); });
   };
   reader.readAsDataURL(file);
 }
