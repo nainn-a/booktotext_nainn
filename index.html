@@ -202,15 +202,9 @@ import { initializeApp }       from 'https://www.gstatic.com/firebasejs/10.12.0/
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, query, orderBy, getDocs }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-/* ── Firebase 초기화 ── */
-const app = initializeApp({
-  apiKey:            "AIzaSyCTrYhpRHc7ZYNWQAdIYgLlPiYCgKoXSVs",
-  authDomain:        "booktotext-nainn.firebaseapp.com",
-  projectId:         "booktotext-nainn",
-  storageBucket:     "booktotext-nainn.firebasestorage.app",
-  messagingSenderId: "1068733097590",
-  appId:             "1:1068733097590:web:d8a6171af60c0d95b6a157"
-});
+/* ── Firebase 초기화 (환경변수에서 config 수신) ── */
+const firebaseConfig = await fetch('/api/firebase-config').then(r => r.json());
+const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* ── 상수 / 상태 ── */
