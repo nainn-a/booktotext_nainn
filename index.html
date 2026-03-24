@@ -353,7 +353,16 @@ function openCropper(url, hint) {
     cropModal.classList.add('open');
     if (cropper) { cropper.destroy(); cropper = null; }
     cropImg.onload = () => {
-      cropper = new Cropper(cropImg, { viewMode: 1, autoCropArea: 0.95, movable: true, zoomable: true });
+      cropper = new Cropper(cropImg, {
+        viewMode: 1,
+        dragMode: 'move',
+        autoCropArea: 0.95,
+        movable: true,
+        zoomable: true,
+        cropBoxMovable: false,
+        cropBoxResizable: true,
+        toggleDragModeOnDblclick: false,
+      });
     };
     cropConfirm.onclick = () => {
       const canvas = cropper.getCroppedCanvas({ maxWidth: 2400, maxHeight: 2400 });
