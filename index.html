@@ -6,7 +6,6 @@
   <title>booktotext — 이미지 텍스트 추출기</title>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
       --bg:        #FAF8F3;
       --bg-2:      #F2EEE6;
@@ -27,89 +26,62 @@
       --expire-tx: #7A6E58;
       --fs: 'Helvetica Neue', Helvetica, Arial, sans-serif;
       --ff: Georgia, 'Times New Roman', serif;
-      --r:  10px;
-      --rs: 4px;
+      --r:  10px; --rs: 4px;
     }
-
-    body {
-      font-family: var(--fs);
-      background-color: var(--bg);
-      background-image: radial-gradient(circle, #CCC4B0 1px, transparent 1px);
-      background-size: 18px 18px;
-      color: var(--text);
-      min-height: 100vh;
-      padding: 2.5rem 1rem 5rem;
-    }
-
+    body { font-family: var(--fs); background-color: var(--bg); background-image: radial-gradient(circle, #CCC4B0 1px, transparent 1px); background-size: 18px 18px; color: var(--text); min-height: 100vh; padding: 2.5rem 1rem 5rem; }
     .wrap { max-width: 640px; margin: 0 auto; }
-
     header { margin-bottom: 1.5rem; }
     .logo { font-size: 18px; font-weight: 700; letter-spacing: 0.04em; color: var(--text); font-family: var(--ff); }
     .logo-sub { font-weight: 400; font-family: var(--fs); font-size: 13px; color: var(--text-3); letter-spacing: 0; }
     .tagline { font-size: 12px; color: var(--text-3); margin-top: 4px; }
     #sync-status { display: inline-flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-3); margin-top: 5px; }
     #sync-dot { width: 6px; height: 6px; border-radius: 50%; background: #B0A890; flex-shrink: 0; transition: background 0.3s; }
-    #sync-dot.ok  { background: #7A9A6A; }
-    #sync-dot.err { background: #903020; }
+    #sync-dot.ok { background: #7A9A6A; } #sync-dot.err { background: #903020; }
 
-    /* 로그인 화면 */
-    #login-screen {
-      margin-top: 3rem; text-align: center;
-      display: flex; flex-direction: column; align-items: center; gap: 16px;
-    }
+    /* 로그인 */
+    #login-screen { margin-top: 3rem; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 16px; }
     #login-screen p { font-size: 13px; color: var(--text-3); }
-    #google-login-btn {
-      display: inline-flex; align-items: center; gap: 10px;
-      padding: 10px 20px; font-size: 13px; font-weight: 500;
-      border: 1px solid var(--border-md); border-radius: var(--rs);
-      background: var(--surface); cursor: pointer; color: var(--text);
-      font-family: var(--fs); transition: background 0.1s;
-    }
+    #google-login-btn { display: inline-flex; align-items: center; gap: 10px; padding: 10px 20px; font-size: 13px; font-weight: 500; border: 1px solid var(--border-md); border-radius: var(--rs); background: var(--surface); cursor: pointer; color: var(--text); font-family: var(--fs); transition: background 0.1s; }
     #google-login-btn:hover { background: var(--bg-2); }
     #google-login-btn svg { width: 18px; height: 18px; flex-shrink: 0; }
 
-    /* 유저 정보 */
-    #user-bar {
-      display: none; align-items: center; justify-content: space-between;
-      margin-bottom: 1.25rem; padding: 8px 12px;
-      background: rgba(240,235,224,0.88);
-      border: 1px solid var(--border);
-      border-radius: var(--rs);
-    }
+    /* 유저 바 */
+    #user-bar { display: none; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding: 8px 12px; background: rgba(240,235,224,0.88); border: 1px solid var(--border); border-radius: var(--rs); }
     #user-bar.visible { display: flex; }
     .user-info { display: flex; align-items: center; gap: 8px; }
     .user-avatar { width: 24px; height: 24px; border-radius: 50%; }
     .user-name { font-size: 12px; color: var(--text-3); }
-    #logout-btn {
-      font-size: 11px; padding: 3px 9px;
-      border: 1px solid var(--border-md); border-radius: var(--rs);
-      background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs);
-    }
+    #logout-btn { font-size: 11px; padding: 3px 9px; border: 1px solid var(--border-md); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); }
     #logout-btn:hover { background: var(--bg-2); }
 
-    /* 앱 본체 */
     #app-screen { display: none; }
     #app-screen.visible { display: block; }
 
     /* 드롭존 */
-    #drop-zone {
-      border: 1.5px dashed rgba(42,32,22,0.28); border-radius: var(--r);
-      padding: 2.5rem 1.5rem; text-align: center; cursor: pointer;
-      background: rgba(240,235,224,0.88); transition: border-color 0.15s, background 0.15s;
-    }
+    #drop-zone { border: 1.5px dashed rgba(42,32,22,0.28); border-radius: var(--r); padding: 2rem 1.5rem; text-align: center; cursor: pointer; background: rgba(240,235,224,0.88); transition: border-color 0.15s, background 0.15s; }
     #drop-zone:hover, #drop-zone.over { border-color: var(--border-hi); background: rgba(232,226,212,0.95); }
-    #drop-zone.filled { padding: 0; border-style: solid; border-color: var(--border); cursor: default; background: var(--surface); }
     #file-input { display: none; }
-    #preview-img { width: 100%; max-height: 360px; object-fit: contain; border-radius: calc(var(--r) - 1px); display: block; }
-
     .up-icon { width: 42px; height: 42px; margin: 0 auto 14px; background: rgba(42,32,22,0.10); border: 1px solid rgba(42,32,22,0.18); border-radius: var(--rs); display: flex; align-items: center; justify-content: center; }
     .up-icon svg { width: 18px; height: 18px; stroke: var(--text); fill: none; }
     .up-hint { font-size: 14px; color: var(--text); font-family: var(--ff); }
     .up-hint strong { font-weight: 700; }
     .up-fmt { font-size: 11px; color: var(--text-3); margin-top: 6px; letter-spacing: 0.06em; }
 
+    /* 큐 */
+    #queue-section { margin-top: 12px; display: none; flex-direction: column; gap: 8px; }
+    .queue-item { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: rgba(240,235,224,0.88); border: 1px solid var(--border); border-radius: var(--rs); }
+    .queue-thumb { width: 40px; height: 40px; border-radius: 3px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); }
+    .queue-info { flex: 1; min-width: 0; }
+    .queue-name { font-size: 12px; font-weight: 500; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .queue-status { font-size: 11px; color: var(--text-3); margin-top: 2px; }
+    .queue-status.done { color: #7A9A6A; }
+    .queue-status.error { color: var(--danger-tx); }
+    .queue-status.processing { color: var(--text-3); }
+    .queue-remove { font-size: 11px; padding: 2px 7px; border: 1px solid var(--border); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); flex-shrink: 0; }
+    .queue-remove:hover { color: var(--danger-tx); border-color: var(--danger-bd); }
+
     #controls { margin-top: 10px; display: flex; gap: 8px; }
-    #extract-btn { flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--rs); cursor: pointer; display: none; font-family: var(--ff); letter-spacing: 0.06em; text-transform: uppercase; text-align: center; justify-content: center; align-items: center; transition: opacity 0.15s; }
+    #extract-btn { flex: 1; padding: 11px 16px; font-size: 13px; font-weight: 700; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--rs); cursor: pointer; display: none; font-family: var(--ff); letter-spacing: 0.06em; text-transform: uppercase; text-align: center; transition: opacity 0.15s; }
     #extract-btn:hover { opacity: 0.85; }
     #extract-btn:disabled { opacity: 0.35; cursor: not-allowed; }
     #reset-btn { padding: 11px 14px; font-size: 12px; background: transparent; border: 1px solid var(--border-md); border-radius: var(--rs); cursor: pointer; color: var(--text-3); display: none; font-family: var(--fs); transition: background 0.1s; }
@@ -117,11 +89,11 @@
 
     #prog-wrap { margin-top: 12px; display: none; }
     #prog-bar { height: 2px; background: rgba(42,32,22,0.12); border-radius: 99px; overflow: hidden; }
-    #prog-fill { height: 100%; background: var(--btn-bg); border-radius: 99px; width: 0%; transition: width 0.4s ease; }
+    #prog-fill { height: 100%; background: var(--btn-bg); border-radius: 99px; width: 0%; transition: width 0.3s ease; }
     #status-msg { font-size: 11px; color: var(--text-3); margin-top: 6px; text-align: center; }
-
     #error-box { margin-top: 10px; padding: 10px 14px; display: none; background: var(--danger-bg); border: 1px solid var(--danger-bd); border-radius: var(--rs); font-size: 13px; color: var(--danger-tx); }
 
+    /* 결과 */
     #result-sec { margin-top: 1.5rem; display: none; }
     .res-hd { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
     .res-lbl { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; }
@@ -134,7 +106,6 @@
     .sec-title { font-size: 10px; font-weight: 500; color: var(--text-3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
     #hist-list { display: flex; flex-direction: column; gap: 6px; }
     #hist-empty { font-size: 13px; color: var(--text-3); text-align: center; padding: 1.5rem; border: 1px dashed var(--border-md); border-radius: var(--rs); }
-
     .hi { display: flex; flex-direction: column; padding: 10px 14px; background: var(--hist-bg); border: 1px solid var(--border); border-radius: var(--rs); }
     .hi-top { display: flex; align-items: center; gap: 12px; }
     .hi-thumb { width: 44px; height: 44px; border-radius: 3px; object-fit: cover; flex-shrink: 0; border: 1px solid var(--border); }
@@ -147,7 +118,7 @@
     .exp-badge { display: inline-block; font-size: 9px; padding: 1px 7px; border-radius: 99px; background: var(--expire-bg); color: var(--expire-tx); font-weight: 500; }
     .hi-btns { display: flex; gap: 5px; flex-shrink: 0; }
     .text-toggle-btn { font-size: 11px; padding: 3px 8px; border: 1px solid var(--border-md); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); white-space: nowrap; transition: background 0.1s; }
-    .text-toggle-btn:hover { background: var(--bg-2); color: var(--text); }
+    .text-toggle-btn:hover { background: var(--bg-2); }
     .del-btn { font-size: 11px; padding: 3px 8px; border: 1px solid var(--border); border-radius: var(--rs); background: transparent; cursor: pointer; color: var(--text-3); font-family: var(--fs); transition: color 0.1s, border-color 0.1s; }
     .del-btn:hover { color: var(--danger-tx); border-color: var(--danger-bd); }
     .hi-text { margin-top: 8px; padding: 8px 10px; background: rgba(240,235,224,0.7); border: 1px solid var(--border); border-radius: var(--rs); font-size: 12px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; font-family: var(--fs); }
@@ -161,7 +132,6 @@
     <div id="sync-status"><span id="sync-dot"></span><span id="sync-label">연결 중...</span></div>
   </header>
 
-  <!-- 로그인 화면 -->
   <div id="login-screen">
     <p>Google 계정으로 로그인하면 모든 기기에서 기록이 동기화돼요</p>
     <button id="google-login-btn">
@@ -175,7 +145,6 @@
     </button>
   </div>
 
-  <!-- 유저 바 -->
   <div id="user-bar">
     <div class="user-info">
       <img class="user-avatar" id="user-avatar" src="" alt="" />
@@ -184,19 +153,17 @@
     <button id="logout-btn">로그아웃</button>
   </div>
 
-  <!-- 앱 본체 -->
   <div id="app-screen">
     <div id="drop-zone">
-      <div id="up-ph">
-        <div class="up-icon">
-          <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
-        </div>
-        <p class="up-hint"><strong>클릭하거나 드래그</strong>해서 사진 업로드</p>
-        <p class="up-fmt">JPG · PNG · WEBP · GIF · BMP</p>
+      <div class="up-icon">
+        <svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5m-13.5-9L12 3m0 0l4.5 4.5M12 3v13.5"/></svg>
       </div>
-      <img id="preview-img" style="display:none;" alt="preview" />
+      <p class="up-hint"><strong>클릭하거나 드래그</strong>해서 사진 업로드</p>
+      <p class="up-fmt">최대 10장 · JPG · PNG · WEBP · BMP</p>
     </div>
-    <input type="file" id="file-input" accept="image/*" />
+    <input type="file" id="file-input" accept="image/*" multiple />
+
+    <div id="queue-section"></div>
 
     <div id="controls">
       <button id="extract-btn">텍스트 추출하기</button>
@@ -226,17 +193,19 @@ import { getFirestore, collection, doc, setDoc, updateDoc, deleteDoc,
   onSnapshot, query, orderBy, getDocs }
   from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
 
-/* ── Firebase 초기화 ── */
 const firebaseConfig = await fetch('/api/firebase-config').then(r => r.json());
 const app  = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db   = getFirestore(app);
 
 const EXPIRE_MS = 30 * 24 * 60 * 60 * 1000;
-let b64 = null, mime = null, currentDocId = null;
+const MAX_FILES = 10;
+
+/* 큐: [{file, url, b64, docId, status}] */
+let queue = [];
 let uploadsCol = null, unsubscribe = null;
 
-/* ── DOM ── */
+/* DOM */
 const loginScreen = document.getElementById('login-screen');
 const userBar     = document.getElementById('user-bar');
 const appScreen   = document.getElementById('app-screen');
@@ -246,8 +215,7 @@ const logoutBtn   = document.getElementById('logout-btn');
 const googleBtn   = document.getElementById('google-login-btn');
 const dz          = document.getElementById('drop-zone');
 const fi          = document.getElementById('file-input');
-const pi          = document.getElementById('preview-img');
-const ph          = document.getElementById('up-ph');
+const queueSec    = document.getElementById('queue-section');
 const xBtn        = document.getElementById('extract-btn');
 const rBtn        = document.getElementById('reset-btn');
 const resSec      = document.getElementById('result-sec');
@@ -261,13 +229,12 @@ const copyBtn     = document.getElementById('copy-btn');
 const syncDot     = document.getElementById('sync-dot');
 const syncLabel   = document.getElementById('sync-label');
 
-/* ── 동기화 상태 ── */
 function setSyncStatus(s) {
   syncDot.className = s;
   syncLabel.textContent = s === 'ok' ? '동기화됨' : s === 'err' ? '연결 오류' : '동기화 중...';
 }
 
-/* ── 인증 상태 감지 ── */
+/* 인증 */
 onAuthStateChanged(auth, user => {
   if (user) {
     loginScreen.style.display = 'none';
@@ -288,33 +255,29 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-/* ── Google 로그인 / 로그아웃 ── */
-googleBtn.addEventListener('click', () => {
-  signInWithPopup(auth, new GoogleAuthProvider()).catch(e => console.error(e));
-});
+googleBtn.addEventListener('click', () => signInWithPopup(auth, new GoogleAuthProvider()).catch(console.error));
 logoutBtn.addEventListener('click', () => signOut(auth));
 
-/* ── Firestore 실시간 리스닝 ── */
 function startListening() {
   if (unsubscribe) unsubscribe();
   const q = query(uploadsCol, orderBy('uploadedAt', 'desc'));
   unsubscribe = onSnapshot(q,
     snap => { setSyncStatus('ok'); renderHistory(snap.docs.map(d => ({ id: d.id, ...d.data() }))); },
-    ()   => setSyncStatus('err')
+    () => setSyncStatus('err')
   );
 }
 
-/* ── 드롭존 ── */
-dz.addEventListener('click', () => { if (!dz.classList.contains('filled')) fi.click(); });
+/* 드롭존 */
+dz.addEventListener('click', () => fi.click());
 dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('over'); });
 dz.addEventListener('dragleave', () => dz.classList.remove('over'));
 dz.addEventListener('drop', e => {
   e.preventDefault(); dz.classList.remove('over');
-  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+  handleFiles(Array.from(e.dataTransfer.files));
 });
-fi.addEventListener('change', e => { if (e.target.files[0]) handleFile(e.target.files[0]); });
+fi.addEventListener('change', e => handleFiles(Array.from(e.target.files)));
 
-/* ── 파일 처리 ── */
+/* 썸네일 리사이즈 */
 function resizeThumb(url, maxSize = 120) {
   return new Promise(resolve => {
     const img = new Image();
@@ -330,38 +293,170 @@ function resizeThumb(url, maxSize = 120) {
   });
 }
 
-function handleFile(file) {
-  if (!file.type.startsWith('image/')) { showErr('이미지 파일만 업로드할 수 있어요.'); return; }
+/* 파일 처리 */
+async function handleFiles(files) {
+  const imgFiles = files.filter(f => f.type.startsWith('image/')).slice(0, MAX_FILES - queue.length);
+  if (!imgFiles.length) return;
   hideErr();
-  const reader = new FileReader();
-  reader.onload = async ev => {
-    const url = ev.target.result;
-    b64 = url.split(',')[1]; mime = file.type;
-    pi.src = url; pi.style.display = 'block';
-    ph.style.display = 'none'; dz.classList.add('filled');
-    xBtn.style.display = 'block'; rBtn.style.display = 'block';
-    resSec.style.display = 'none';
-    const now = Date.now();
-    currentDocId = String(now);
+
+  for (const file of imgFiles) {
+    const url = await new Promise(res => {
+      const r = new FileReader();
+      r.onload = e => res(e.target.result);
+      r.readAsDataURL(file);
+    });
+    const b64 = url.split(',')[1];
+    const now = Date.now() + queue.length;
+    const docId = String(now);
     const thumb = await resizeThumb(url);
+
+    queue.push({ file, url, b64, mime: file.type, docId, status: 'ready', thumb });
+
     setSyncStatus('ing');
-    setDoc(doc(uploadsCol, currentDocId), {
+    setDoc(doc(uploadsCol, docId), {
       name: file.name, thumb,
       uploadedAt: now, expiresAt: now + EXPIRE_MS,
       extractedText: ''
-    }).then(() => setSyncStatus('ok')).catch(e => { console.error(e); setSyncStatus('err'); });
-  };
-  reader.readAsDataURL(file);
+    }).then(() => setSyncStatus('ok')).catch(() => setSyncStatus('err'));
+  }
+
+  renderQueue();
+  xBtn.style.display = 'block';
+  rBtn.style.display = 'block';
+  queueSec.style.display = 'flex';
+  resSec.style.display = 'none';
+
+  if (queue.length >= MAX_FILES) {
+    dz.style.opacity = '0.4';
+    dz.style.pointerEvents = 'none';
+  }
 }
 
-/* ── 삭제 ── */
+/* 큐 렌더 */
+function renderQueue() {
+  queueSec.innerHTML = queue.map((item, i) => `
+    <div class="queue-item" id="qi-${i}">
+      <img class="queue-thumb" src="${item.thumb}" alt="${esc(item.file.name)}" />
+      <div class="queue-info">
+        <div class="queue-name">${esc(item.file.name)}</div>
+        <div class="queue-status ${item.status}" id="qs-${i}">
+          ${item.status === 'ready' ? '대기 중' : item.status === 'processing' ? '추출 중...' : item.status === 'done' ? '완료' : '오류'}
+        </div>
+      </div>
+      ${item.status === 'ready' ? `<button class="queue-remove" onclick="removeFromQueue(${i})">✕</button>` : ''}
+    </div>
+  `).join('');
+}
+
+window.removeFromQueue = i => {
+  queue.splice(i, 1);
+  if (!queue.length) resetAll();
+  else { renderQueue(); }
+  if (queue.length < MAX_FILES) { dz.style.opacity = ''; dz.style.pointerEvents = ''; }
+};
+
+/* OCR 추출 — 순차 처리 */
+xBtn.addEventListener('click', async () => {
+  if (!queue.length) return;
+  xBtn.disabled = true; xBtn.textContent = '추출 중...';
+  resSec.style.display = 'none';
+  progWrap.style.display = 'block';
+  hideErr();
+
+  const results = [];
+  for (let i = 0; i < queue.length; i++) {
+    const item = queue[i];
+    if (item.status === 'done') { results.push(item.result || ''); continue; }
+    item.status = 'processing';
+    renderQueue();
+    const pct = Math.round((i / queue.length) * 80) + 10;
+    progFill.style.width = pct + '%';
+    statusMsg.textContent = `${i + 1} / ${queue.length} 처리 중...`;
+
+    try {
+      const res = await fetch('/api/ocr', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514', max_tokens: 2000,
+          messages: [{ role: 'user', content: [
+            { type: 'image', source: { type: 'base64', media_type: item.mime, data: item.b64 } },
+            { type: 'text', text: `이 이미지에서 텍스트를 추출한다. 아래 규칙을 절대적으로 따른다.
+
+규칙:
+1. 이미지에 실제로 인쇄되거나 쓰여 있는 글자만 그대로 출력한다.
+2. 단어나 문장을 절대 바꾸지 않는다. 맞춤법 교정, 문맥 보완, 추측, 의역을 일절 하지 않는다.
+3. 판독하기 어려운 글자는 [?]로 표시한다. 억지로 읽지 않는다.
+4. 이미지에 없는 글자를 만들어내지 않는다.
+5. 설명, 요약, 부연 없이 텍스트만 출력한다.
+6. 텍스트가 없으면 [텍스트 없음]만 출력한다.` }
+          ]}]
+        })
+      });
+      if (!res.ok) throw new Error(`API 오류 (${res.status})`);
+      const data = await res.json();
+      const text = data.content?.map(b => b.text || '').join('') || '';
+      item.status = 'done';
+      item.result = text;
+      results.push(text);
+      if (item.docId) {
+        updateDoc(doc(uploadsCol, item.docId), { extractedText: text }).catch(() => {});
+      }
+    } catch(e) {
+      item.status = 'error';
+      results.push(`[오류: ${e.message}]`);
+    }
+    renderQueue();
+  }
+
+  progFill.style.width = '100%';
+  statusMsg.textContent = '';
+  setTimeout(() => {
+    progWrap.style.display = 'none';
+    progFill.style.width = '0%';
+
+    const combined = results.join('\n\n───────────────\n\n');
+    resBox.textContent = combined;
+    charCount.textContent = `${combined.replace(/\s/g, '').length}자 (공백 제외)`;
+    resSec.style.display = 'block';
+    xBtn.disabled = false;
+    xBtn.textContent = queue.length > 1 ? '다시 추출' : '다시 추출';
+  }, 300);
+});
+
+/* 리셋 */
+rBtn.addEventListener('click', resetAll);
+function resetAll() {
+  queue = [];
+  queueSec.innerHTML = ''; queueSec.style.display = 'none';
+  dz.style.opacity = ''; dz.style.pointerEvents = '';
+  xBtn.style.display = 'none'; rBtn.style.display = 'none';
+  resSec.style.display = 'none';
+  progWrap.style.display = 'none'; statusMsg.textContent = '';
+  fi.value = ''; hideErr();
+}
+
+/* 복사 */
+copyBtn.addEventListener('click', () => {
+  const text = resBox.textContent; if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
+  }).catch(() => {
+    const s = window.getSelection(), r = document.createRange();
+    r.selectNodeContents(resBox); s.removeAllRanges(); s.addRange(r);
+    document.execCommand('copy');
+    copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
+  });
+});
+
+/* 삭제 */
 window.deleteEntry = async id => {
   setSyncStatus('ing');
   try { await deleteDoc(doc(uploadsCol, String(id))); setSyncStatus('ok'); }
   catch { setSyncStatus('err'); }
 };
 
-/* ── 텍스트 토글 ── */
+/* 텍스트 토글 */
 window.toggleText = (id, btn) => {
   const el = document.getElementById(id);
   if (!el) return;
@@ -370,9 +465,9 @@ window.toggleText = (id, btn) => {
   btn.textContent = open ? '텍스트 ▲' : '텍스트 ▼';
 };
 
-/* ── 렌더링 ── */
+/* 렌더링 */
 function fmt(ts) {
-  const d = new Date(ts), p = n => String(n).padStart(2,'0');
+  const d = new Date(ts), p = n => String(n).padStart(2, '0');
   return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
 }
 function fmtExp(exp) {
@@ -411,79 +506,13 @@ function renderHistory(uploads) {
   }).join('');
 }
 
-/* ── 만료 정리 (1시간마다) ── */
+/* 만료 정리 */
 setInterval(async () => {
   if (!uploadsCol) return;
   const now = Date.now();
   const snap = await getDocs(uploadsCol);
   snap.forEach(d => { if (d.data().expiresAt < now) deleteDoc(doc(uploadsCol, d.id)); });
 }, 3600000);
-
-/* ── OCR 추출 ── */
-xBtn.addEventListener('click', async () => {
-  if (!b64) return;
-  xBtn.disabled = true; xBtn.textContent = '분석 중...';
-  resSec.style.display = 'none';
-  progWrap.style.display = 'block'; progFill.style.width = '30%';
-  statusMsg.textContent = '이미지를 분석하고 있어요...'; hideErr();
-  try {
-    progFill.style.width = '60%';
-    const res = await fetch('/api/ocr', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514', max_tokens: 2000,
-        messages: [{ role: 'user', content: [
-          { type: 'image', source: { type: 'base64', media_type: mime, data: b64 } },
-          { type: 'text', text: '이 이미지에 있는 텍스트를 그대로 추출해줘. 반드시 다음 규칙을 따라:\n1. 이미지에 실제로 보이는 글자만 출력해. 절대로 문맥을 보완하거나 추측해서 바꾸지 마.\n2. 손글씨처럼 알아보기 어려운 글자가 있으면 [?] 로 표시해. 억지로 읽으려고 하지 마.\n3. 글자가 번진 부분, 겹친 부분, 확실히 판독되지 않는 부분도 [?] 로 남겨.\n4. 설명, 요약, 부연 없이 텍스트만 출력해.\n5. 텍스트가 없으면 [텍스트 없음] 이라고만 출력해.' }
-        ]}]
-      })
-    });
-    progFill.style.width = '90%';
-    if (!res.ok) { const e = await res.json().catch(()=>({})); throw new Error(e.error?.message || `API 오류 (${res.status})`); }
-    const data = await res.json();
-    const text = data.content?.map(b => b.text||'').join('') || '';
-    progFill.style.width = '100%'; statusMsg.textContent = '';
-    setTimeout(() => {
-      progWrap.style.display = 'none'; progFill.style.width = '0%';
-      resBox.textContent = text;
-      charCount.textContent = `${text.replace(/\s/g,'').length}자 (공백 제외)`;
-      resSec.style.display = 'block';
-      xBtn.disabled = false; xBtn.textContent = '다시 추출';
-      if (currentDocId && uploadsCol) {
-        updateDoc(doc(uploadsCol, currentDocId), { extractedText: text }).catch(() => {});
-      }
-    }, 300);
-  } catch(e) {
-    progWrap.style.display = 'none'; progFill.style.width = '0%'; statusMsg.textContent = '';
-    showErr('추출 실패: ' + e.message);
-    xBtn.disabled = false; xBtn.textContent = '텍스트 추출하기';
-  }
-});
-
-/* ── 리셋 ── */
-rBtn.addEventListener('click', () => {
-  b64 = null; mime = null; currentDocId = null;
-  pi.src = ''; pi.style.display = 'none'; ph.style.display = 'block';
-  dz.classList.remove('filled');
-  xBtn.style.display = 'none'; rBtn.style.display = 'none';
-  resSec.style.display = 'none';
-  progWrap.style.display = 'none'; statusMsg.textContent = '';
-  fi.value = ''; hideErr();
-});
-
-/* ── 복사 ── */
-copyBtn.addEventListener('click', () => {
-  const text = resBox.textContent; if (!text) return;
-  navigator.clipboard.writeText(text).then(() => {
-    copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
-  }).catch(() => {
-    const s = window.getSelection(), r = document.createRange();
-    r.selectNodeContents(resBox); s.removeAllRanges(); s.addRange(r);
-    document.execCommand('copy');
-    copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
-  });
-});
 
 function showErr(msg) { errBox.textContent = msg; errBox.style.display = 'block'; }
 function hideErr() { errBox.style.display = 'none'; }
