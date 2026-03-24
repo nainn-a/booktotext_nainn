@@ -56,6 +56,23 @@
       font-family: var(--font-sans);
     }
 
+    #sync-status {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; color: var(--text-3); margin-top: 6px;
+      font-family: var(--font-sans);
+    }
+    #sync-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: #B0A890; flex-shrink: 0;
+    }
+    #sync-dot.ok  { background: #7A9A6A; }
+    #sync-dot.err { background: #903020; }
+
+    #device-id-wrap {
+      margin-top: 6px; font-size: 10px; color: var(--text-3);
+      font-family: var(--font-mono);
+    }
+
     #drop-zone {
       border: 1.5px dashed rgba(42,32,22,0.28);
       border-radius: var(--radius);
@@ -224,7 +241,22 @@
     <header>
       <div class="logo">booktotext <span style="font-weight:400;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;font-size:13px;color:#7A6E58;letter-spacing:0;">by nainn</span></div>
       <div class="tagline">사진 속 텍스트를 추출해요 — Claude Vision 기반</div>
+      <div id="sync-status"><span id="sync-dot"></span><span id="sync-label">연결 중...</span></div>
     </header>
+
+    <div id="id-panel" style="margin-bottom:1.5rem;background:rgba(240,235,224,0.88);border:1px solid rgba(42,32,22,0.12);border-radius:6px;padding:12px 14px;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;">
+      <div style="font-size:10px;font-weight:500;color:#7A6E58;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;">기기 ID 동기화</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+        <div id="device-id-display" style="flex:1;font-size:11px;font-family:'Menlo','Consolas',monospace;color:#2A2016;background:rgba(42,32,22,0.06);border:1px solid rgba(42,32,22,0.12);border-radius:4px;padding:6px 8px;word-break:break-all;line-height:1.5;"></div>
+        <button onclick="copyDeviceId()" id="copy-id-btn" style="flex-shrink:0;font-size:11px;padding:6px 10px;border:1px solid rgba(42,32,22,0.20);border-radius:4px;background:transparent;cursor:pointer;color:#7A6E58;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;white-space:nowrap;">복사</button>
+      </div>
+      <div style="font-size:10px;color:#7A6E58;margin-bottom:6px;">다른 기기의 ID를 붙여넣으면 같은 기록을 공유해요</div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <input id="import-id-input" type="text" placeholder="다른 기기 ID 붙여넣기..." style="flex:1;font-size:11px;font-family:'Menlo','Consolas',monospace;color:#2A2016;background:rgba(42,32,22,0.04);border:1px solid rgba(42,32,22,0.15);border-radius:4px;padding:6px 8px;outline:none;" />
+        <button onclick="importDeviceId()" style="flex-shrink:0;font-size:11px;padding:6px 10px;border:1px solid rgba(42,32,22,0.20);border-radius:4px;background:transparent;cursor:pointer;color:#7A6E58;font-family:'Helvetica Neue',Helvetica,Arial,sans-serif;white-space:nowrap;">적용</button>
+      </div>
+      <div id="import-msg" style="font-size:10px;color:#7A6E58;margin-top:5px;display:none;"></div>
+    </div>
 
     <div id="drop-zone" onclick="onDropZoneClick()">
       <div id="upload-placeholder">
@@ -270,12 +302,55 @@
     </div>
   </div>
 
-  <script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+    import {
+      getFirestore, collection, doc, setDoc, deleteDoc,
+      onSnapshot, query, orderBy, Timestamp
+    } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js';
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCTrYhpRHc7ZYNWQAdIYgLlPiYCgKoXSVs",
+      authDomain: "booktotext-nainn.firebaseapp.com",
+      projectId: "booktotext-nainn",
+      storageBucket: "booktotext-nainn.firebasestorage.app",
+      messagingSenderId: "1068733097590",
+      appId: "1:1068733097590:web:d8a6171af60c0d95b6a157"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db  = getFirestore(app);
+
     const EXPIRE_MS = 24 * 60 * 60 * 1000;
-    let uploads = [];
     let imageBase64 = null;
     let imageMediaType = null;
 
+    /* ── 기기 ID ── */
+    function getDeviceId() {
+      let id = localStorage.getItem('btt_device_id');
+      if (!id) {
+        id = crypto.randomUUID();
+        localStorage.setItem('btt_device_id', id);
+      }
+      return id;
+    }
+    const DEVICE_ID = getDeviceId();
+    const uploadsCol = collection(db, 'users', DEVICE_ID, 'uploads');
+
+    document.getElementById('device-id-display').textContent = DEVICE_ID;
+
+    /* ── 동기화 상태 ── */
+    const syncDot   = document.getElementById('sync-dot');
+    const syncLabel = document.getElementById('sync-label');
+    function setSyncStatus(state) {
+      syncDot.className = '';
+      if (state === 'ok')  { syncDot.classList.add('ok');  syncLabel.textContent = '동기화됨'; }
+      if (state === 'err') { syncDot.classList.add('err'); syncLabel.textContent = '연결 오류'; }
+      if (state === 'ing') { syncLabel.textContent = '동기화 중...'; }
+    }
+
+    /* ── DOM refs ── */
     const dropZone      = document.getElementById('drop-zone');
     const fileInput     = document.getElementById('file-input');
     const previewImg    = document.getElementById('preview-img');
@@ -291,9 +366,26 @@
     const errorBox      = document.getElementById('error-box');
     const copyBtn       = document.getElementById('copy-btn');
 
+    /* ── Firestore 실시간 리스닝 ── */
+    const q = query(uploadsCol, orderBy('uploadedAt', 'desc'));
+    onSnapshot(q,
+      snapshot => {
+        setSyncStatus('ok');
+        const now = Date.now();
+        const docs = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderHistory(docs.map(u => ({
+          ...u,
+          expired: u.expiresAt < now
+        })));
+      },
+      err => { console.error(err); setSyncStatus('err'); }
+    );
+
+    /* ── 파일 처리 ── */
     function onDropZoneClick() {
       if (!dropZone.classList.contains('has-image')) fileInput.click();
     }
+    window.onDropZoneClick = onDropZoneClick;
 
     dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
     dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
@@ -319,40 +411,36 @@
         resetBtn.style.display = 'flex';
         resultSection.style.display = 'none';
 
-        const now = Date.now();
-        const entry = {
-          id: now, name: file.name, thumb: dataUrl,
-          uploadedAt: now, expiresAt: now + EXPIRE_MS,
-          expired: false, timer: null
-        };
-        entry.timer = setTimeout(() => expireEntry(entry.id), EXPIRE_MS);
-        uploads.unshift(entry);
-        renderHistory();
+        /* Firestore에 업로드 기록 저장 (썸네일 포함) */
+        const now  = Date.now();
+        const docId = String(now);
+        setSyncStatus('ing');
+        setDoc(doc(uploadsCol, docId), {
+          name:       file.name,
+          thumb:      dataUrl,
+          uploadedAt: now,
+          expiresAt:  now + EXPIRE_MS,
+          deviceId:   DEVICE_ID
+        }).then(() => setSyncStatus('ok')).catch(() => setSyncStatus('err'));
       };
       reader.readAsDataURL(file);
     }
 
-    function expireEntry(id) {
-      const u = uploads.find(u => u.id === id);
-      if (!u) return;
-      u.expired = true; u.thumb = null;
-      renderHistory();
-    }
+    /* ── 삭제 ── */
+    window.deleteEntry = async function(id) {
+      setSyncStatus('ing');
+      try {
+        await deleteDoc(doc(uploadsCol, String(id)));
+        setSyncStatus('ok');
+      } catch { setSyncStatus('err'); }
+    };
 
-    function deleteEntry(id) {
-      const idx = uploads.findIndex(u => u.id === id);
-      if (idx === -1) return;
-      if (uploads[idx].timer) clearTimeout(uploads[idx].timer);
-      uploads.splice(idx, 1);
-      renderHistory();
-    }
-
+    /* ── 렌더링 ── */
     function formatTime(ts) {
       const d = new Date(ts);
       const p = n => String(n).padStart(2, '0');
       return `${d.getFullYear()}.${p(d.getMonth()+1)}.${p(d.getDate())} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
     }
-
     function formatExpire(expiresAt) {
       const diff = expiresAt - Date.now();
       if (diff <= 0) return '만료됨';
@@ -360,54 +448,45 @@
       const m = Math.floor((diff % 3600000) / 60000);
       return h > 0 ? `${h}시간 ${m}분 후 자동 삭제` : `${m}분 후 자동 삭제`;
     }
-
     function escHtml(s) {
       return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
     }
 
-    function renderHistory() {
+    function renderHistory(uploads) {
       const list = document.getElementById('history-list');
-      if (uploads.length === 0) {
+      if (!uploads.length) {
         list.innerHTML = '<p id="history-empty">아직 업로드된 사진이 없어요</p>';
         return;
       }
       list.innerHTML = uploads.map(u => `
         <div class="history-item">
-          ${u.expired
+          ${u.expired || !u.thumb
             ? `<div class="thumb-expired"><svg viewBox="0 0 24 24" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9.75 9.75l4.5 4.5m0-4.5l-4.5 4.5M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></div>`
             : `<img class="history-thumb" src="${u.thumb}" alt="${escHtml(u.name)}" />`}
           <div class="history-info">
             <div class="history-name">${escHtml(u.name)}</div>
             <div class="history-time">${formatTime(u.uploadedAt)}</div>
-            <div class="history-expire" data-id="${u.id}">
+            <div class="history-expire">
               ${u.expired ? '<span class="expire-badge">만료 — 사진 삭제됨</span>' : formatExpire(u.expiresAt)}
             </div>
           </div>
-          <button class="del-btn" onclick="deleteEntry(${u.id})">삭제</button>
+          <button class="del-btn" onclick="deleteEntry('${u.id}')">삭제</button>
         </div>
       `).join('');
     }
 
-    setInterval(() => {
-      document.querySelectorAll('.history-expire[data-id]').forEach(el => {
-        const id = Number(el.dataset.id);
-        const u = uploads.find(u => u.id === id);
-        if (u && !u.expired) el.textContent = formatExpire(u.expiresAt);
+    /* ── 만료 항목 자동 삭제 (Firestore) ── */
+    setInterval(async () => {
+      const now = Date.now();
+      const snapshot = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js')
+        .then(m => m.getDocs(uploadsCol));
+      snapshot.forEach(d => {
+        if (d.data().expiresAt < now) deleteDoc(doc(uploadsCol, d.id));
       });
-    }, 30000);
+    }, 60 * 60 * 1000);
 
-    function resetUpload() {
-      imageBase64 = null; imageMediaType = null;
-      previewImg.src = ''; previewImg.style.display = 'none';
-      uploadPH.style.display = 'block';
-      dropZone.classList.remove('has-image');
-      extractBtn.style.display = 'none'; resetBtn.style.display = 'none';
-      resultSection.style.display = 'none';
-      progressWrap.style.display = 'none'; statusMsg.textContent = '';
-      fileInput.value = ''; hideError();
-    }
-
-    async function extractText() {
+    /* ── OCR 추출 ── */
+    window.extractText = async function() {
       if (!imageBase64) return;
       extractBtn.disabled = true; extractBtn.textContent = '분석 중...';
       resultSection.style.display = 'none';
@@ -448,9 +527,22 @@
         showError('추출 실패: ' + err.message);
         extractBtn.disabled = false; extractBtn.textContent = '텍스트 추출하기';
       }
-    }
+    };
 
-    function copyText() {
+    /* ── 리셋 ── */
+    window.resetUpload = function() {
+      imageBase64 = null; imageMediaType = null;
+      previewImg.src = ''; previewImg.style.display = 'none';
+      uploadPH.style.display = 'block';
+      dropZone.classList.remove('has-image');
+      extractBtn.style.display = 'none'; resetBtn.style.display = 'none';
+      resultSection.style.display = 'none';
+      progressWrap.style.display = 'none'; statusMsg.textContent = '';
+      fileInput.value = ''; hideError();
+    };
+
+    /* ── 복사 ── */
+    window.copyText = function() {
       const text = resultBox.textContent;
       if (!text) return;
       navigator.clipboard.writeText(text).then(() => {
@@ -462,7 +554,28 @@
         document.execCommand('copy');
         copyBtn.textContent = '복사됨'; setTimeout(() => copyBtn.textContent = '복사', 1500);
       });
-    }
+    };
+
+    window.copyDeviceId = function() {
+      navigator.clipboard.writeText(DEVICE_ID).then(() => {
+        const btn = document.getElementById('copy-id-btn');
+        btn.textContent = '복사됨'; setTimeout(() => btn.textContent = '복사', 1500);
+      });
+    };
+
+    window.importDeviceId = function() {
+      const input = document.getElementById('import-id-input');
+      const msg   = document.getElementById('import-msg');
+      const val   = input.value.trim();
+      if (!val || val.length < 8) {
+        msg.style.display = 'block'; msg.style.color = '#903020';
+        msg.textContent = 'ID가 올바르지 않아요.'; return;
+      }
+      localStorage.setItem('btt_device_id', val);
+      msg.style.display = 'block'; msg.style.color = '#7A6E58';
+      msg.textContent = '적용됐어요. 페이지를 새로고침할게요.';
+      setTimeout(() => location.reload(), 800);
+    };
 
     function showError(msg) { errorBox.textContent = msg; errorBox.style.display = 'block'; }
     function hideError() { errorBox.style.display = 'none'; }
