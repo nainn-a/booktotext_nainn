@@ -54,6 +54,13 @@
     #sync-dot.err { background: #903020; }
 
     /* ID 패널 */
+    .id-panel-toggle {
+      width: 100%; display: flex; align-items: center; justify-content: space-between;
+      background: transparent; border: none; cursor: pointer; padding: 0;
+      font-size: 10px; font-weight: 500; color: var(--text-3);
+      text-transform: uppercase; letter-spacing: 0.08em; font-family: var(--fs);
+    }
+    .id-panel-toggle:hover { color: var(--text); }
     .id-panel {
       margin-bottom: 1.5rem;
       background: rgba(240,235,224,0.88);
@@ -148,18 +155,23 @@
   </header>
 
   <!-- 기기 ID 패널 -->
-  <div class="id-panel" style="display:none;">
-    <div class="id-panel-title">기기 ID 동기화</div>
-    <div class="id-row">
-      <div class="id-display" id="id-display"></div>
-      <button class="sm-btn" id="copy-id-btn">복사</button>
+  <div class="id-panel">
+    <button class="id-panel-toggle" id="id-panel-toggle">
+      <span>기기 ID 동기화</span>
+      <span id="id-arrow" style="font-size:9px; display:inline-block; transition:transform 0.2s;">▼</span>
+    </button>
+    <div id="id-panel-body" style="display:none; margin-top:10px;">
+      <div class="id-row">
+        <div class="id-display" id="id-display"></div>
+        <button class="sm-btn" id="copy-id-btn">복사</button>
+      </div>
+      <div class="id-hint">다른 기기의 ID를 붙여넣으면 같은 기록을 공유해요</div>
+      <div class="id-import-row">
+        <input class="id-input" id="import-input" type="text" placeholder="다른 기기 ID 붙여넣기..." />
+        <button class="sm-btn" id="import-btn">적용</button>
+      </div>
+      <div id="import-msg"></div>
     </div>
-    <div class="id-hint">다른 기기의 ID를 붙여넣으면 같은 기록을 공유해요</div>
-    <div class="id-import-row">
-      <input class="id-input" id="import-input" type="text" placeholder="다른 기기 ID 붙여넣기..." />
-      <button class="sm-btn" id="import-btn">적용</button>
-    </div>
-    <div id="import-msg"></div>
   </div>
 
   <!-- 드롭존 -->
@@ -415,6 +427,17 @@ copyIdBtn.addEventListener('click', () => {
   });
 });
 
+/* ── 패널 토글 ── */
+const idToggleBtn  = document.getElementById('id-panel-toggle');
+const idPanelBody  = document.getElementById('id-panel-body');
+const idArrow      = document.getElementById('id-arrow');
+
+idToggleBtn.addEventListener('click', () => {
+  const isOpen = idPanelBody.style.display !== 'none';
+  idPanelBody.style.display   = isOpen ? 'none' : 'block';
+  idArrow.style.transform     = isOpen ? 'rotate(0deg)' : 'rotate(-180deg)';
+});
+
 /* ── ID 가져오기 ── */
 importBtn.addEventListener('click', applyImport);
 importInput.addEventListener('keydown', e => { if (e.key === 'Enter') applyImport(); });
@@ -425,10 +448,19 @@ function applyImport() {
     importMsg.style.display = 'block'; importMsg.style.color = '#903020';
     importMsg.textContent = 'ID가 올바르지 않아요.'; return;
   }
+  DEVICE_ID = val;
   localStorage.setItem('btt_device_id', val);
+  idDisplay.textContent = val;
   importMsg.style.display = 'block'; importMsg.style.color = '#7A6E58';
-  importMsg.textContent = '적용됐어요. 페이지를 새로고침할게요.';
-  setTimeout(() => location.reload(), 800);
+  importMsg.textContent = '적용됐어요. 기록을 불러오는 중...';
+  startListening();
+  setTimeout(() => {
+    importMsg.textContent = '동기화 완료!';
+    setTimeout(() => {
+      idPanelBody.style.display = 'none';
+      idArrow.style.transform = 'rotate(0deg)';
+    }, 1000);
+  }, 1200);
 }
 
 function showErr(msg) { errBox.textContent = msg; errBox.style.display = 'block'; }
