@@ -123,8 +123,51 @@
     .del-btn:hover { color: var(--danger-tx); border-color: var(--danger-bd); }
     .hi-text { margin-top: 8px; padding: 8px 10px; background: rgba(240,235,224,0.7); border: 1px solid var(--border); border-radius: var(--rs); font-size: 12px; line-height: 1.7; color: var(--text); white-space: pre-wrap; word-break: break-word; font-family: var(--fs); }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.css" />
+  <style>
+    /* 크롭 모달 */
+    #crop-modal {
+      display: none; position: fixed; inset: 0; z-index: 999;
+      background: rgba(42,32,22,0.7);
+      align-items: center; justify-content: center;
+    }
+    #crop-modal.open { display: flex; }
+    .crop-box {
+      background: var(--bg); border-radius: var(--r);
+      padding: 16px; width: min(90vw, 560px);
+      display: flex; flex-direction: column; gap: 12px;
+    }
+    .crop-header { display: flex; align-items: center; justify-content: space-between; }
+    .crop-title { font-size: 13px; font-weight: 500; color: var(--text); font-family: var(--ff); }
+    .crop-hint { font-size: 11px; color: var(--text-3); }
+    .crop-img-wrap { width: 100%; max-height: 55vh; overflow: hidden; background: #1a1a1a; border-radius: var(--rs); }
+    #crop-img { display: block; max-width: 100%; }
+    .crop-btns { display: flex; gap: 8px; justify-content: flex-end; }
+    .crop-btn-confirm { padding: 9px 18px; font-size: 13px; font-weight: 700; background: var(--btn-bg); color: var(--btn-text); border: none; border-radius: var(--rs); cursor: pointer; font-family: var(--ff); letter-spacing: 0.04em; transition: opacity 0.15s; }
+    .crop-btn-confirm:hover { opacity: 0.85; }
+    .crop-btn-skip { padding: 9px 14px; font-size: 12px; background: transparent; border: 1px solid var(--border-md); border-radius: var(--rs); cursor: pointer; color: var(--text-3); font-family: var(--fs); transition: background 0.1s; }
+    .crop-btn-skip:hover { background: var(--bg-2); }
+    .crop-btn-cancel { padding: 9px 14px; font-size: 12px; background: transparent; border: 1px solid var(--border-md); border-radius: var(--rs); cursor: pointer; color: var(--text-3); font-family: var(--fs); transition: background 0.1s; }
+    .crop-btn-cancel:hover { background: var(--bg-2); }
+  </style>
 </head>
 <body>
+<!-- 크롭 모달 -->
+<div id="crop-modal">
+  <div class="crop-box">
+    <div class="crop-header">
+      <span class="crop-title">크롭</span>
+      <span class="crop-hint" id="crop-hint"></span>
+    </div>
+    <div class="crop-img-wrap"><img id="crop-img" alt="crop" /></div>
+    <div class="crop-btns">
+      <button class="crop-btn-cancel" id="crop-cancel">취소</button>
+      <button class="crop-btn-skip" id="crop-skip">크롭 안 함</button>
+      <button class="crop-btn-confirm" id="crop-confirm">크롭 적용</button>
+    </div>
+  </div>
+</div>
+
 <div class="wrap">
   <header>
     <div class="logo">booktotext <span class="logo-sub">by nainn</span></div>
@@ -185,6 +228,7 @@
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.6.2/cropper.min.js"></script>
 <script type="module">
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
 import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged }
@@ -293,24 +337,68 @@ function resizeThumb(url, maxSize = 120) {
   });
 }
 
+/* ── 크롭 모달 ── */
+const cropModal   = document.getElementById('crop-modal');
+const cropImg     = document.getElementById('crop-img');
+const cropConfirm = document.getElementById('crop-confirm');
+const cropSkip    = document.getElementById('crop-skip');
+const cropCancel  = document.getElementById('crop-cancel');
+const cropHint    = document.getElementById('crop-hint');
+let cropper = null;
+
+function openCropper(url, hint) {
+  return new Promise(resolve => {
+    cropImg.src = url;
+    cropHint.textContent = hint;
+    cropModal.classList.add('open');
+    if (cropper) { cropper.destroy(); cropper = null; }
+    cropImg.onload = () => {
+      cropper = new Cropper(cropImg, { viewMode: 1, autoCropArea: 0.95, movable: true, zoomable: true });
+    };
+    cropConfirm.onclick = () => {
+      const canvas = cropper.getCroppedCanvas({ maxWidth: 2400, maxHeight: 2400 });
+      cropModal.classList.remove('open');
+      if (cropper) { cropper.destroy(); cropper = null; }
+      resolve({ cropped: true, url: canvas.toDataURL('image/jpeg', 0.92) });
+    };
+    cropSkip.onclick = () => {
+      cropModal.classList.remove('open');
+      if (cropper) { cropper.destroy(); cropper = null; }
+      resolve({ cropped: false, url });
+    };
+    cropCancel.onclick = () => {
+      cropModal.classList.remove('open');
+      if (cropper) { cropper.destroy(); cropper = null; }
+      resolve(null);
+    };
+  });
+}
+
 /* 파일 처리 */
 async function handleFiles(files) {
   const imgFiles = files.filter(f => f.type.startsWith('image/')).slice(0, MAX_FILES - queue.length);
   if (!imgFiles.length) return;
   hideErr();
 
-  for (const file of imgFiles) {
-    const url = await new Promise(res => {
+  for (let i = 0; i < imgFiles.length; i++) {
+    const file = imgFiles[i];
+    const origUrl = await new Promise(res => {
       const r = new FileReader();
       r.onload = e => res(e.target.result);
       r.readAsDataURL(file);
     });
-    const b64 = url.split(',')[1];
+
+    const hint = imgFiles.length > 1 ? `${queue.length + 1} / ${queue.length + imgFiles.length}` : '';
+    const result = await openCropper(origUrl, hint);
+    if (!result) break; // 취소하면 나머지도 중단
+
+    const finalUrl = result.url;
+    const b64 = finalUrl.split(',')[1];
     const now = Date.now() + queue.length;
     const docId = String(now);
-    const thumb = await resizeThumb(url);
+    const thumb = await resizeThumb(finalUrl);
 
-    queue.push({ file, url, b64, mime: file.type, docId, status: 'ready', thumb });
+    queue.push({ file, url: finalUrl, b64, mime: 'image/jpeg', docId, status: 'ready', thumb });
 
     setSyncStatus('ing');
     setDoc(doc(uploadsCol, docId), {
@@ -320,6 +408,7 @@ async function handleFiles(files) {
     }).then(() => setSyncStatus('ok')).catch(() => setSyncStatus('err'));
   }
 
+  if (!queue.length) return;
   renderQueue();
   xBtn.style.display = 'block';
   rBtn.style.display = 'block';
